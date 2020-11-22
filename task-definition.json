@@ -42,7 +42,7 @@
       "memoryReservation": 512,
       "volumesFrom": [],
       "stopTimeout": null,
-      "image": "nginx",
+      "image": "339836605358.dkr.ecr.eu-central-1.amazonaws.com/revival",
       "startTimeout": null,
       "firelensConfiguration": null,
       "dependsOn": null,
