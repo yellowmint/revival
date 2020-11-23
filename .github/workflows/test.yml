@@ -7,6 +7,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-18.04
+
     container:
       image: elixir:1.11.2-alpine
       env:
@@ -14,6 +15,7 @@ jobs:
         PGPASSWORD: duck_duck
         PGHOST: postgres
         PGDATABASE: revival_test
+
     services:
       postgres:
         image: postgres:13.1-alpine
@@ -26,9 +28,13 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
     steps:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Test
+      - name: Fetch dependencies
+        uses: mix local.hex --force
+
+      - name: Run tests
         run: mix test
