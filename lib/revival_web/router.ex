@@ -18,6 +18,7 @@ defmodule RevivalWeb.Router do
     pipe_through :browser
 
     live "/", PageLive, :index
+    resources "/users", UserController
   end
 
   # Other scopes may use custom stacks.
