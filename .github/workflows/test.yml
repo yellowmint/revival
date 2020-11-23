@@ -30,7 +30,7 @@ jobs:
 
     steps:
       - name: Install hex
-        run: mix local.hex --force
+        run: mix local.hex --force && mix local.rebar --force
 
       - name: Check out code
         uses: actions/checkout@v2
