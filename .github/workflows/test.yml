@@ -29,11 +29,14 @@ jobs:
           --health-retries 5
 
     steps:
+      - name: Install hex
+        run: mix local.hex --force
+
       - name: Check out code
         uses: actions/checkout@v2
 
       - name: Fetch dependencies
-        run: mix deps.get && mix local.hex --force
+        run: mix deps.get
 
       - name: Run tests
         run: mix test
