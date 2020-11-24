@@ -14,8 +14,6 @@
   </div>
 <% end %>
 
-<%= form_for @conn, Routes.session_path(@conn, :delete), [method: :delete, as: :user], fn _ -> %>
-  <div class="form-group">
-    <%= submit "logout" %>
-  </div>
-<% end %>
+<hr/>
+
+<%= link "Sign up", to: Routes.user_path(@conn, :new) %>

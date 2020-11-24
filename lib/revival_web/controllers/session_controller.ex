@@ -16,7 +16,7 @@ defmodule RevivalWeb.SessionController do
         |> configure_session(renew: true)
         |> redirect(to: "/")
 
-      {:error, :unauthorized} ->
+      {:error, _} ->
         conn
         |> put_flash(:error, "Bad email/password combination")
         |> redirect(to: Routes.session_path(conn, :new))
