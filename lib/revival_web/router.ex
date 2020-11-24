@@ -8,6 +8,7 @@ defmodule RevivalWeb.Router do
     plug :put_root_layout, {RevivalWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug RevivalWeb.Plugs.RetrieveUser
   end
 
   pipeline :api do
@@ -18,6 +19,8 @@ defmodule RevivalWeb.Router do
     pipe_through :browser
 
     live "/", PageLive, :index
+    resources "/users", UserController, only: [:index, :new, :create, :show]
+    resources "/session", SessionController, only: [:new, :create, :delete], singleton: true
   end
 
   # Other scopes may use custom stacks.
