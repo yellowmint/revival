@@ -1,4 +1,4 @@
-defmodule Reveival.Release do
+defmodule Revival.Release do
   @app :revival
 
   def migrate do
