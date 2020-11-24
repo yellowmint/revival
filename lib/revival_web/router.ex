@@ -18,7 +18,8 @@ defmodule RevivalWeb.Router do
     pipe_through :browser
 
     live "/", PageLive, :index
-    resources "/users", UserController
+    resources "/users", UserController, only: [:index, :new, :create, :show]
+    resources "/session", SessionController, only: [:new, :create, :delete], singleton: true
   end
 
   # Other scopes may use custom stacks.

@@ -51,42 +51,8 @@ defmodule Revival.Accounts do
   """
   def create_user(attrs \\ %{}) do
     %User{}
-    |> User.changeset(attrs)
+    |> User.changeset_create(attrs)
     |> Repo.insert()
-  end
-
-  @doc """
-  Updates a user.
-
-  ## Examples
-
-      iex> update_user(user, %{field: new_value})
-      {:ok, %User{}}
-
-      iex> update_user(user, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_user(%User{} = user, attrs) do
-    user
-    |> User.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a user.
-
-  ## Examples
-
-      iex> delete_user(user)
-      {:ok, %User{}}
-
-      iex> delete_user(user)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_user(%User{} = user) do
-    Repo.delete(user)
   end
 
   @doc """
@@ -94,11 +60,16 @@ defmodule Revival.Accounts do
 
   ## Examples
 
-      iex> change_user(user)
+      iex> change_new_user(user)
       %Ecto.Changeset{data: %User{}}
 
   """
-  def change_user(%User{} = user, attrs \\ %{}) do
-    User.changeset(user, attrs)
+  def change_new_user(%User{} = user, attrs \\ %{}) do
+    User.changeset_create(user, attrs)
+  end
+
+  def authenticate_by_email_password(email, password) do
+    Repo.get_by(User, email: email)
+    |> Pbkdf2.check_pass(password)
   end
 end

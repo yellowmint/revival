@@ -3,9 +3,8 @@ defmodule RevivalWeb.UserControllerTest do
 
   alias Revival.Accounts
 
-  @create_attrs %{email: "some email", name: "some name", provider: "some provider"}
-  @update_attrs %{email: "some updated email", name: "some updated name", provider: "some updated provider"}
-  @invalid_attrs %{email: nil, name: nil, provider: nil}
+  @create_attrs %{email: "some@email.com", name: "some name", password: "some password"}
+  @invalid_attrs %{email: nil, name: nil, password: nil}
 
   def fixture(:user) do
     {:ok, user} = Accounts.create_user(@create_attrs)
@@ -41,48 +40,5 @@ defmodule RevivalWeb.UserControllerTest do
       conn = post(conn, Routes.user_path(conn, :create), user: @invalid_attrs)
       assert html_response(conn, 200) =~ "New User"
     end
-  end
-
-  describe "edit user" do
-    setup [:create_user]
-
-    test "renders form for editing chosen user", %{conn: conn, user: user} do
-      conn = get(conn, Routes.user_path(conn, :edit, user))
-      assert html_response(conn, 200) =~ "Edit User"
-    end
-  end
-
-  describe "update user" do
-    setup [:create_user]
-
-    test "redirects when data is valid", %{conn: conn, user: user} do
-      conn = put(conn, Routes.user_path(conn, :update, user), user: @update_attrs)
-      assert redirected_to(conn) == Routes.user_path(conn, :show, user)
-
-      conn = get(conn, Routes.user_path(conn, :show, user))
-      assert html_response(conn, 200) =~ "some updated email"
-    end
-
-    test "renders errors when data is invalid", %{conn: conn, user: user} do
-      conn = put(conn, Routes.user_path(conn, :update, user), user: @invalid_attrs)
-      assert html_response(conn, 200) =~ "Edit User"
-    end
-  end
-
-  describe "delete user" do
-    setup [:create_user]
-
-    test "deletes chosen user", %{conn: conn, user: user} do
-      conn = delete(conn, Routes.user_path(conn, :delete, user))
-      assert redirected_to(conn) == Routes.user_path(conn, :index)
-      assert_error_sent 404, fn ->
-        get(conn, Routes.user_path(conn, :show, user))
-      end
-    end
-  end
-
-  defp create_user(_) do
-    user = fixture(:user)
-    %{user: user}
   end
 end
