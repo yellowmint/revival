@@ -68,7 +68,7 @@
   "family": "revival-task-def",
   "pidMode": null,
   "requiresCompatibilities": [
-    "FARGATE"
+    "EC2"
   ],
   "networkMode": "awsvpc",
   "cpu": "256",
