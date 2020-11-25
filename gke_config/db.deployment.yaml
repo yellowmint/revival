@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: revival-db
+  template:
+    metadata:
+      labels:
+        app: revival-db
+    spec:
+      containers:
+        - name: revival-db
+          image: postgres:13.1-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: password
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: db-name
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: pg_data
+      volumes:
+        - name: pg_data
+          gcePersistentDisk:
+            pdName: pg_data
+            fsType: ext4
