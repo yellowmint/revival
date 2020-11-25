@@ -3,10 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: database-storage
 spec:
-  capacity:
-    storage: 5Gi
   accessModes:
     - ReadWriteOnce
-  gcePersistentDisk:
-    pdName: pg-data
-    fsType: ext4
+  resources:
+    requests:
+      storage: 10Gi
