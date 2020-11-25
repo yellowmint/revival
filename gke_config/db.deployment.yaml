@@ -38,6 +38,5 @@ spec:
               name: pg-data
       volumes:
         - name: pg-data
-          gcePersistentDisk:
-            pdName: pg-data
-            fsType: ext4
+          persistentVolumeClaim:
+            pdNaclaimNameme: pg-data
