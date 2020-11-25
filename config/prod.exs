@@ -10,7 +10,7 @@ use Mix.Config
 # which you should run after static files are built and
 # before starting your production server.
 config :revival, RevivalWeb.Endpoint,
-  url: [host: "revival-lc-529757882.eu-central-1.elb.amazonaws.com", port: 80],
+  url: [host: "35.242.242.81", port: 80],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Do not print debug messages in production
