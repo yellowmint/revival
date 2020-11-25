@@ -36,8 +36,3 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: pg-data
-      volumes:
-        - name: pg-data
-          gcePersistentDisk:
-            pdName: pg-data
-            fsType: ext4
