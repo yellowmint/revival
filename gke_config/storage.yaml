@@ -8,5 +8,5 @@ spec:
   accessModes:
     - ReadWriteOnce
   gcePersistentDisk:
-    pdName: pg_data
+    pdName: pg-data
     fsType: ext4

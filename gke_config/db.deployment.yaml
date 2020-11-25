@@ -35,9 +35,9 @@ spec:
                   key: db-name
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: pg_data
+              name: pg-data
       volumes:
-        - name: pg_data
+        - name: pg-data
           gcePersistentDisk:
-            pdName: pg_data
+            pdName: pg-data
             fsType: ext4
