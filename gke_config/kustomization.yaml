@@ -1,0 +1,6 @@
+commonLabels:
+  app: revival
+
+resources:
+  - app.deployment.yaml
+  - app.service.yaml
