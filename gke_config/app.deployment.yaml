@@ -6,11 +6,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: revival-app
+      app: revival
   template:
     metadata:
       labels:
-        app: revival-app
+        app: revival
     spec:
       containers:
         - name: revival-app

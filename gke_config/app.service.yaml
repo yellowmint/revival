@@ -4,7 +4,7 @@ metadata:
   name: app-load-balancer
 spec:
   selector:
-    app: revival-app
+    app: revival
   type: LoadBalancer
   ports:
     - name: http
