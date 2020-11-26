@@ -6,8 +6,8 @@ defmodule Revival.GamesTest do
   describe "plays" do
     alias Revival.Games.{Play, Board, Field, Player}
 
-    test "new_game/3 creates fresh play" do
-      play = Games.new_game(:classic, nil, nil)
+    test "create_play/1 creates fresh play" do
+      play = Games.create_play(:classic)
       play = Map.put(play, :id, nil)
 
       column = Enum.map(1..10, fn _ -> %Field{unit: nil} end)
@@ -28,9 +28,9 @@ defmodule Revival.GamesTest do
              }
     end
 
-    test "new_game/3 creates plays with unique ids" do
-      play1 = Games.new_game(:classic, nil, nil)
-      play2 = Games.new_game(:classic, nil, nil)
+    test "create_play/1 creates plays with unique ids" do
+      play1 = Games.create_play(:classic)
+      play2 = Games.create_play(:classic)
       refute play1.id == play2.id
     end
   end

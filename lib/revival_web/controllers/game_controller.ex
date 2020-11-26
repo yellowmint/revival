@@ -4,14 +4,12 @@ defmodule RevivalWeb.GameController do
   alias Revival.Games
 
   def create(conn, _params) do
-    game = Games.new_game(:classic, nil, nil)
-
-    conn
-    |> put_flash(:info, "New game created")
-    |> redirect(to: Routes.game_path(conn, :show, game))
+    play = Games.create_play(:classic)
+    redirect(conn, to: Routes.game_path(conn, :show, play))
   end
 
   def show(conn, %{"id" => id}) do
-    render(conn, "show.html", id: id)
+    play = Games.get_play!(id)
+    render(conn, "show.html", play: play)
   end
 end

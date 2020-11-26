@@ -1,13 +1,37 @@
 defmodule Revival.Games.Play do
-  alias Ecto.UUID
+  use Ecto.Schema
+  import Ecto.Changeset
+
   alias Revival.Games.{Play, Board, Player}
 
-  defstruct [:id, :mode, :round, :board, :players]
+  @primary_key {:id, :binary_id, autogenerate: true}
 
-  def new_play(:classic, player1_id, player2_id) do
+  schema "plays" do
+    field :mode, :string
+    field :round, :integer
+    field :board, :map
+    field :players, {:array, :map}
+
+    timestamps()
+  end
+
+  def new_play(:classic) do
     board = Board.new_board(10, 10)
-    players = [%Player{id: player1_id}, %Player{id: player2_id}]
+    players = [%Player{}, %Player{}]
 
-    %Play{id: UUID.generate(), mode: :classic, round: 1, board: board, players: players}
+    %Play{mode: :classic, round: 1, board: board, players: players}
+  end
+
+  @doc false
+  def changeset(play, attrs \\ %{}) do
+    play
+    |> convert_atoms_to_strings
+    |> cast(attrs, [:mode, :round, :board, :players])
+    |> validate_required([:mode])
+    |> validate_inclusion(:mode, [:classic])
+  end
+
+  defp convert_atoms_to_strings(play) do
+    %{play | mode: Atom.to_string(play.mode)}
   end
 end

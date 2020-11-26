@@ -1,11 +1,16 @@
 defmodule Revival.Games do
   @moduledoc """
-  Game context
+  Provides functions to create new game and play it.
   """
-
+  import Ecto.Query, warn: false
+  alias Revival.Repo
   alias Revival.Games.Play
 
-  def new_game(mode, player1_id, player2_id) do
-    Play.new_play(mode, player1_id, player2_id)
+  def create_play(mode) do
+    Play.new_play(mode)
+    |> Play.changeset()
+    |> Repo.insert!()
   end
+
+  def get_play!(id), do: Repo.get!(Play, id)
 end
