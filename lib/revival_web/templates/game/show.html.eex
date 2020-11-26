@@ -1,0 +1,2 @@
+<h1>Revival Game</h1>
+Id: <%= @id %>
