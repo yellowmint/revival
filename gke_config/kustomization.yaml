@@ -1,5 +1,5 @@
 resources:
-  - storage.yaml
+  - db.storage.yaml
   - db.deployment.yaml
   - db.service.yaml
   - app.deployment.yaml
