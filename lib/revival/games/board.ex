@@ -1,6 +1,7 @@
 defmodule Revival.Games.Board do
   alias Revival.Games.{Board, Field}
 
+  @derive Jason.Encoder
   defstruct [:columns, :rows, :fields]
 
   def new_board(columns, rows) do
