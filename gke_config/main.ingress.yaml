@@ -1,10 +1,11 @@
-apiVersion: networking.gke.io/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: main-ingress
   annotations:
     kubernetes.io/ingress.global-static-ip-name: main-address
     networking.gke.io/managed-certificates: main-certificate
+    networking.gke.io/v1beta1.FrontendConfig: main-frontend
 spec:
   backend:
     serviceName: app-service
