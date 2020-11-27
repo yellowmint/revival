@@ -1,6 +1,9 @@
 resources:
-  - storage.yaml
+  - db.storage.yaml
   - db.deployment.yaml
   - db.service.yaml
   - app.deployment.yaml
   - app.service.yaml
+  - main.certificate.yaml
+  - main.frontend.yaml
+  - main.ingress.yaml
