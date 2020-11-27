@@ -9,3 +9,5 @@ spec:
   backend:
     serviceName: app-service
     servicePort: 80
+  redirectToHttps:
+    enabled: true
