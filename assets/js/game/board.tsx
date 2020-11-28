@@ -19,10 +19,10 @@ export const Board: React.FC<BoardProps> = (props: BoardProps) => {
 
     return (
         <section className={styles.board}>
-            {board.fields.map(row =>
-                <div>
-                    {row.map(column =>
-                        <div>field</div>
+            {board.fields.map((row, rowIdx) =>
+                <div key={rowIdx}>
+                    {row.map((column, columnIdx) =>
+                        <div key={columnIdx}>field</div>
                     )}
                 </div>
             )}
