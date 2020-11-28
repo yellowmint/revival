@@ -1,18 +1,31 @@
 import React from "react"
+import styles from "./board.module.scss"
 
 interface BoardProps {
-    name: string
+    board: TBoard
 }
 
-const Board: React.FC<BoardProps> = (props: BoardProps) => {
-    const name = props.name
+export type TBoard = {
+    rows: number
+    columns: number
+    fields: Array<Array<TUnit>>
+}
+
+export type TUnit = {}
+
+export const Board: React.FC<BoardProps> = (props: BoardProps) => {
+    const board = props.board
+    console.log(board)
 
     return (
-        <section className="phx-hero">
-            <h1>Welcome to {name} with Typescript and React!</h1>
-            <p>Peace-of-mind from prototype to production</p>
+        <section className={styles.board}>
+            {board.fields.map(row =>
+                <div>
+                    {row.map(column =>
+                        <div>field</div>
+                    )}
+                </div>
+            )}
         </section>
     )
 }
-
-export default Board
