@@ -13,25 +13,29 @@ export type TBoard = {
 
 export type TUnit = {}
 
-export const Board: React.FC<BoardProps> = (props: BoardProps) => {
+export const Board = (props: BoardProps) => {
     const board = props.board
 
     return (
-        <section className={styles.board} style={{
-            gridTemplateRows: `repeat(${board.rows}, 1fr)`,
-            gridTemplateColumns: `repeat(${board.columns}, 1fr)`
-        }}>
-            {[...Array(board.rows)].map((_, rowIdx) =>
-                [...Array(board.columns)].map((_, columnIdx) =>
-                    <Field key={`${rowIdx}-${columnIdx}`}/>
-                )
-            )}
-        </section>
+        <article className={styles.board}>
+            <section className={styles.wrapper} style={{
+                gridTemplateRows: `repeat(${board.rows}, 1fr)`,
+                gridTemplateColumns: `repeat(${board.columns}, 1fr)`
+            }}>
+                {[...Array(board.rows)].map((_, rowIdx) =>
+                    [...Array(board.columns)].map((_, columnIdx) =>
+                        <Field key={`${rowIdx}-${columnIdx}`}/>
+                    )
+                )}
+            </section>
+        </article>
     )
 }
 
-const Field: React.FC = () => (
+const Field = () => (
     <div className={styles.field}>
-        <div className={styles.content}>X</div>
+        <div className={styles.content}>
+
+        </div>
     </div>
 )
