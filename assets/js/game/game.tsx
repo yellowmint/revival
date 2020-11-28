@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react"
-import { Socket } from "phoenix"
+import React, {useEffect, useState} from "react"
+import {Socket} from "phoenix"
 import {Board, TBoard} from "./board"
 
 type Game = {
@@ -10,7 +10,10 @@ export const Game: React.FC = () => {
     const [game, setGame] = useState<Game | null>(null)
 
     useEffect(() => {
-        const socket = new Socket('/socket', { params: { token: "your auth token" } })
+        const tokenTag = document.querySelector('meta[name="auth-token"]') as HTMLMetaElement
+        const authParams = tokenTag ? {token: tokenTag.content} : {}
+
+        const socket = new Socket('/socket', {params: authParams})
         socket.connect()
 
         const pathname = window.location.pathname
@@ -18,15 +21,17 @@ export const Game: React.FC = () => {
 
         const channel = socket.channel("game:" + id)
         channel.join()
-            .receive("ok", resp => setGame(resp) )
-            .receive("error", resp => { console.log("Unable to join", resp) })
+            .receive("ok", resp => setGame(resp))
+            .receive("error", resp => console.log("Unable to join", resp))
+
+        return () => socket.disconnect()
     }, [])
 
     if (!game) return <div>Loading</div>
 
     return (
         <section>
-            <Board board={game.board} />
+            <Board board={game.board}/>
         </section>
     )
 }
