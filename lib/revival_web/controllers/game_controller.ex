@@ -8,8 +8,7 @@ defmodule RevivalWeb.GameController do
     redirect(conn, to: Routes.game_path(conn, :show, play))
   end
 
-  def show(conn, %{"id" => id}) do
-    play = Games.get_play!(id)
-    render(conn, "show.html", play: play)
+  def show(conn, _params) do
+    render(conn, "show.html")
   end
 end

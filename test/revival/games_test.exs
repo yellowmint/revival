@@ -24,7 +24,6 @@ defmodule Revival.GamesTest do
           %Player{id: nil, name: nil, rank: nil},
           %Player{id: nil, name: nil, rank: nil}
         ]
-
     end
 
     test "create_play/1 creates plays with unique ids" do

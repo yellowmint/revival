@@ -1,11 +1,12 @@
 import React from "react"
 
-interface GreeterProps {
+interface BoardProps {
     name: string
 }
 
-const Greeter: React.FC<GreeterProps> = (props: GreeterProps) => {
+const Board: React.FC<BoardProps> = (props: BoardProps) => {
     const name = props.name
+
     return (
         <section className="phx-hero">
             <h1>Welcome to {name} with Typescript and React!</h1>
@@ -14,4 +15,4 @@ const Greeter: React.FC<GreeterProps> = (props: GreeterProps) => {
     )
 }
 
-export default Greeter
+export default Board

@@ -1,2 +1,2 @@
-<h1>Revival Game</h1>
-Id: <%= @id %>
+<div id="game"></div>
+<script defer type="text/javascript" src="<%= Routes.static_path(@conn, "/js/game.js") %>"></script>

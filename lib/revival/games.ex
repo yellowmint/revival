@@ -12,5 +12,5 @@ defmodule Revival.Games do
     |> Repo.insert!()
   end
 
-  def get_play!(id), do: Repo.get!(Play, id)
+  def get_play(id), do: Repo.get(Play, id)
 end
