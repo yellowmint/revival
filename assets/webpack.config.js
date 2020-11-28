@@ -17,7 +17,8 @@ module.exports = (env, options) => {
       ]
     },
     entry: {
-      'app': glob.sync('./vendor/**/*.js').concat(['./js/app.js'])
+      'app': glob.sync('./vendor/**/*.js').concat(['./js/app.js']),
+      'game': glob.sync('./vendor/**/*.js').concat(['./js/game.js'])
     },
     output: {
       filename: '[name].js',
@@ -31,27 +32,42 @@ module.exports = (env, options) => {
           test: /\.(js|ts|jsx|tsx)$/,
           exclude: /node_modules/,
           use: [
-            {loader: 'babel-loader'},
-            {loader: 'ts-loader'},
+            { loader: 'babel-loader' },
+            { loader: 'ts-loader' }
           ]
         },
         {
           test: /\.[s]?css$/,
+          exclude: /\.module.scss$/,
           use: [
             MiniCssExtractPlugin.loader,
             'css-loader',
-            'sass-loader',
-          ],
+            'sass-loader'
+          ]
+        },
+        {
+          test: /\.module.scss$/,
+          use: [
+            'style-loader',
+            {
+              loader: 'css-loader',
+              options: {
+                importLoaders: 1,
+                modules: true
+              }
+            },
+            'sass-loader'
+          ]
         }
       ]
     },
     resolve: {
-      extensions: [".ts", ".tsx", ".js", ".jsx"]
+      extensions: [".ts", ".tsx", ".js", ".jsx", ".scss"]
     },
     plugins: [
-      new MiniCssExtractPlugin({ filename: '../css/app.css' }),
+      new MiniCssExtractPlugin({ filename: '../css/[name].css' }),
       new CopyWebpackPlugin([{ from: 'static/', to: '../' }])
     ]
-    .concat(devMode ? [new HardSourceWebpackPlugin()] : [])
+      .concat(devMode ? [new HardSourceWebpackPlugin()] : [])
   }
 };

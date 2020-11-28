@@ -20,7 +20,9 @@ defmodule RevivalWeb.Router do
 
     live "/", PageLive, :index
     resources "/users", UserController, only: [:index, :new, :create, :show]
-    resources "/session", SessionController, only: [:new, :create, :delete], singleton: true
+    resources "/sessions", SessionController, only: [:new, :create, :delete], singleton: true
+
+    resources "/games", GameController, only: [:create, :show]
   end
 
   # Other scopes may use custom stacks.

@@ -2,7 +2,7 @@ defmodule RevivalWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", RevivalWeb.RoomChannel
+  channel "game:*", RevivalWeb.GameChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
