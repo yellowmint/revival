@@ -1,15 +1,10 @@
 defmodule Revival.Games.Board do
-  alias Revival.Games.{Board, Field}
+  alias Revival.Games.{Board}
 
   @derive Jason.Encoder
-  defstruct [:columns, :rows, :fields]
+  defstruct [:columns, :rows, :units]
 
   def new_board(columns, rows) do
-    fields =
-      Enum.map(1..columns, fn _ ->
-        Enum.map(1..rows, fn _ -> %Field{} end)
-      end)
-
-    %Board{columns: columns, rows: rows, fields: fields}
+    %Board{columns: columns, rows: rows, units: []}
   end
 end
