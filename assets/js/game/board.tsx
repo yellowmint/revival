@@ -1,4 +1,4 @@
-import React from "react"
+import React, {CSSProperties} from "react"
 import styles from "./board.module.scss"
 
 interface BoardProps {
@@ -18,10 +18,9 @@ export const Board = (props: BoardProps) => {
 
     return (
         <article className={styles.board}>
-            <section className={styles.wrapper} style={{
-                gridTemplateRows: `repeat(${board.rows}, 1fr)`,
-                gridTemplateColumns: `repeat(${board.columns}, 1fr)`
-            }}>
+            <section className={styles.wrapper}
+                     style={{"--rows": board.rows, "--columns": board.columns} as CSSProperties}
+            >
                 {[...Array(board.rows)].map((_, rowIdx) =>
                     [...Array(board.columns)].map((_, columnIdx) =>
                         <Field key={`${rowIdx}-${columnIdx}`}/>
