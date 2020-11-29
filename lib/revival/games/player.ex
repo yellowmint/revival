@@ -29,14 +29,16 @@ defmodule Revival.Games.Player do
 
   def get_player(user_id, _name) do
     case Repo.get_by(Player, user_id: user_id) do
-      nil ->
-        user = Accounts.get_user!(user_id)
-
-        %Player{user_id: user_id, name: user.name, rank: 0}
-        |> Player.changeset()
-        |> Repo.insert!()
-
+      nil -> create_player(user_id)
       player -> player
     end
+  end
+
+  defp create_player(user_id) do
+    user = Accounts.get_user!(user_id)
+
+    %Player{user_id: user_id, name: user.name, rank: 0}
+    |> Player.changeset()
+    |> Repo.insert!()
   end
 end
