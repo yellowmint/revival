@@ -18,9 +18,7 @@ defmodule Revival.Games.Play do
 
   def new_play(:classic) do
     board = Board.new_board(10, 10)
-    players = [%Player{}, %Player{}]
-
-    %Play{mode: :classic, round: 1, board: board, players: players}
+    %Play{mode: :classic, round: 1, board: board, players: []}
   end
 
   @doc false
@@ -30,6 +28,7 @@ defmodule Revival.Games.Play do
     |> cast(attrs, [:mode, :round, :board, :players])
     |> validate_required([:mode])
     |> validate_inclusion(:mode, [:classic])
+    |> validate_length(:players, max: 2)
   end
 
   defp convert_atoms_to_strings(play) do

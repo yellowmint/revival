@@ -13,23 +13,20 @@ export type TBoard = {
 
 export type TUnit = {}
 
-export const Board = (props: BoardProps) => {
-    const board = props.board
+export const Board = ({board}: BoardProps) => (
+    <article className={styles.board}>
+        <section className={styles.wrapper}
+                 style={{"--rows": board.rows, "--columns": board.columns} as CSSProperties}
+        >
+            {[...Array(board.rows)].map((_, rowIdx) =>
+                [...Array(board.columns)].map((_, columnIdx) =>
+                    <Field key={`${rowIdx}-${columnIdx}`}/>
+                )
+            )}
+        </section>
+    </article>
+)
 
-    return (
-        <article className={styles.board}>
-            <section className={styles.wrapper}
-                     style={{"--rows": board.rows, "--columns": board.columns} as CSSProperties}
-            >
-                {[...Array(board.rows)].map((_, rowIdx) =>
-                    [...Array(board.columns)].map((_, columnIdx) =>
-                        <Field key={`${rowIdx}-${columnIdx}`}/>
-                    )
-                )}
-            </section>
-        </article>
-    )
-}
 
 const Field = () => (
     <div className={styles.field}>

@@ -16,10 +16,7 @@ defmodule Revival.GamesTest do
                rows: 10,
                units: []
              }
-      assert play.players == [
-               %Player{id: nil, name: nil, rank: nil},
-               %Player{id: nil, name: nil, rank: nil}
-             ]
+      assert play.players == []
     end
 
     test "create_play/1 creates plays with unique ids" do

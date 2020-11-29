@@ -1,9 +1,11 @@
 import {useEffect, useState} from "react";
 import {Channel, Socket} from "phoenix";
 import {TBoard} from "./board";
+import {TPlayer} from "./join"
 
 type Game = {
     board: TBoard
+    players: Array<TPlayer>
 }
 
 export const useConnectionLogic = () => {
