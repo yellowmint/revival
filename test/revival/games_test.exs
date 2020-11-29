@@ -4,7 +4,7 @@ defmodule Revival.GamesTest do
   alias Revival.Games
 
   describe "plays" do
-    alias Revival.Games.{Board, Player}
+    alias Revival.Games.Board
 
     test "create_play/1 creates fresh play" do
       play = Games.create_play(:classic)

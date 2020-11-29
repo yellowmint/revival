@@ -2,7 +2,7 @@ defmodule Revival.Games.Play do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Revival.Games.{Play, Board, Player}
+  alias Revival.Games.{Play, Board}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @derive {Jason.Encoder, only: [:id, :mode, :round, :board, :players]}
