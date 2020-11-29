@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from "react"
-import {Socket} from "phoenix"
+import {Channel, Socket} from "phoenix"
 import {Board, TBoard} from "./board"
 
 type Game = {
     board: TBoard
 }
 
-export const Game: React.FC = () => {
-    const [game, setGame] = useState<Game | null>(null)
+export const Game = () => {
+    const [game, setGame] = useState<Game>()
+    const [channel, setChannel] = useState<Channel>()
 
     useEffect(() => {
         const tokenTag = document.querySelector('meta[name="auth-token"]') as HTMLMetaElement
@@ -16,14 +17,15 @@ export const Game: React.FC = () => {
         const socket = new Socket('/socket', {params: authParams})
         socket.connect()
 
-        const pathname = window.location.pathname
+        const {pathname} = window.location
         const id = pathname.substring(pathname.lastIndexOf('/') + 1)
 
-        const channel = socket.channel("game:" + id)
-        channel.join()
+        const channelHandle = socket.channel("game:" + id)
+        channelHandle.join()
             .receive("ok", resp => setGame(resp))
             .receive("error", resp => console.log("Unable to join", resp))
 
+        setChannel(channelHandle)
         return () => socket.disconnect()
     }, [])
 
@@ -35,4 +37,3 @@ export const Game: React.FC = () => {
         </section>
     )
 }
-

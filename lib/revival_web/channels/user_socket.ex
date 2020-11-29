@@ -7,7 +7,7 @@ defmodule RevivalWeb.UserSocket do
   def connect(%{"token" => token}, socket, _connect_info) do
     case Phoenix.Token.verify(socket, "user auth", token, max_age: 86400) do
       {:ok, user_id} -> {:ok, assign(socket, :user_id, user_id)}
-      {:error, _reason} -> :error
+      {:error, _reason} -> {:ok, assign(socket, :anonymous_id, Ecto.UUID.generate)}
     end
   end
 
