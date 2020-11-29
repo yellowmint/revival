@@ -15,6 +15,8 @@ export const useConnectionLogic = () => {
     const {authToken} = useAuthToken()
 
     useEffect(() => {
+        if (authToken === undefined) return
+
         const authParams = authToken ? {token: authToken} : {}
         const socket = new Socket('/socket', {params: authParams})
         socket.connect()
@@ -29,7 +31,7 @@ export const useConnectionLogic = () => {
 
         setChannel(channelHandle)
         return () => socket.disconnect()
-    }, [])
+    }, [authToken])
 
     useEffect(() => {
         if (!channel) return
