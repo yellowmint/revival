@@ -13,8 +13,11 @@ defmodule RevivalWeb.GameChannel do
     player = Games.new_player(socket.assigns.user_id, name)
 
     case Games.join(socket.assigns.game_id, player) do
-      :ok -> {:noreply, assign(socket, :player, player)}
-      :error -> {:error, %{reason: "cannot join the game"}, socket}
+      {:ok, _game} ->
+        reply = {:ok, %{player_id: player.id}}
+        socket = assign(socket, :player, player)
+        {:reply, reply, socket}
+      {:error, _reason} -> {:reply, :error, socket}
     end
   end
 end

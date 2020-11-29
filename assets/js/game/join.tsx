@@ -1,5 +1,6 @@
-import React, {useEffect} from "react"
+import React, {FormEvent, useState} from "react"
 import {Channel} from "phoenix"
+import {useAuthToken} from "./useAuthToken"
 
 interface JoinProps {
     channel: Channel
@@ -14,21 +15,35 @@ export type TPlayer = {
 }
 
 export const Join = ({channel, players}: JoinProps) => {
-    useEffect(() => {
-        const ref = channel.on("joined", payload => {
-            console.log("joined", payload)
-        })
+    const [name, setName] = useState("")
+    const [error, setError] = useState("")
+    const [playerId, setPlayerId] = useState("")
+    const {authToken} = useAuthToken()
 
-        return () => channel.off("joined", ref)
-    })
+    const join = (event: FormEvent) => {
+        event.preventDefault()
 
-    const join = () => channel.push("join_game", {name: 'anonymous'})
+        channel.push("join_game", {name: name})
+            .receive("ok", resp => setPlayerId(resp.player_id))
+            .receive("error", () => setError("Cannot join game"))
+    }
 
-    if (players.length >= 2) return <></>
+    if (playerId || players.length >= 2) return <></>
 
     return (
         <section>
-            <button className="button" onClick={join}>Join</button>
+            <form onSubmit={join}>
+                {error && <div className="alert alert-warning">{error}</div>}
+                {!authToken && <label>
+                    Name
+                    <input value={name}
+                           onChange={({target}) => setName(target.value)}
+                           type="text"
+                           required={true}
+                    />
+                </label>}
+                <button type="submit" className="button">Join</button>
+            </form>
         </section>
     )
 }

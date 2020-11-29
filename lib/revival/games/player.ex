@@ -1,4 +1,5 @@
 defmodule Revival.Games.Player do
+  alias Revival.Accounts
   alias Revival.Games.Player
 
   @derive Jason.Encoder
@@ -9,7 +10,7 @@ defmodule Revival.Games.Player do
   end
 
   def new_player(user_id, _name) do
-    # todo: get player data for given user_id
-    %Player{id: Ecto.UUID.generate, user_id: user_id, name: "", rank: 0}
+    user = Accounts.get_user!(user_id)
+    %Player{id: Ecto.UUID.generate, user_id: user_id, name: user.name, rank: 0}
   end
 end
