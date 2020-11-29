@@ -12,6 +12,7 @@ defmodule Revival.Games.Play do
     field :round, :integer
     field :board, :map
     field :players, {:array, :map}
+    field :lock_version, :integer, default: 1
 
     timestamps()
   end
@@ -29,6 +30,7 @@ defmodule Revival.Games.Play do
     |> validate_inclusion(:mode, ["classic"])
     |> validate_length(:players, max: 2)
     |> validate_unique_list(:players)
+    |> optimistic_lock(:lock_version)
   end
 
   def validate_unique_list(changeset, field) do
