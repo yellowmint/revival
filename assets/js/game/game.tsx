@@ -1,33 +1,17 @@
-import React, { useEffect, useState } from "react"
-import { Socket } from "phoenix"
-import {Board, TBoard} from "./board"
+import React from "react"
+import {Board} from "./board"
+import {useConnectionLogic} from "./useConnectionLogic"
+import {Join} from "./join"
 
-type Game = {
-    board: TBoard
-}
+export const Game = () => {
+    const {game, channel} = useConnectionLogic()
 
-export const Game: React.FC = () => {
-    const [game, setGame] = useState<Game | null>(null)
-
-    useEffect(() => {
-        const socket = new Socket('/socket', { params: { token: "your auth token" } })
-        socket.connect()
-
-        const pathname = window.location.pathname
-        const id = pathname.substring(pathname.lastIndexOf('/') + 1)
-
-        const channel = socket.channel("game:" + id)
-        channel.join()
-            .receive("ok", resp => setGame(resp) )
-            .receive("error", resp => { console.log("Unable to join", resp) })
-    }, [])
-
-    if (!game) return <div>Loading</div>
+    if (!game || !channel) return <div>Loading</div>
 
     return (
         <section>
-            <Board board={game.board} />
+            <Join channel={channel} players={game.players}/>
+            <Board board={game.board}/>
         </section>
     )
 }
-

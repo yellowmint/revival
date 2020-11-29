@@ -1,4 +1,4 @@
-import React from "react"
+import React, {CSSProperties} from "react"
 import styles from "./board.module.scss"
 
 interface BoardProps {
@@ -13,25 +13,25 @@ export type TBoard = {
 
 export type TUnit = {}
 
-export const Board: React.FC<BoardProps> = (props: BoardProps) => {
-    const board = props.board
-
-    return (
-        <section className={styles.board} style={{
-            gridTemplateRows: `repeat(${board.rows}, 1fr)`,
-            gridTemplateColumns: `repeat(${board.columns}, 1fr)`
-        }}>
+export const Board = ({board}: BoardProps) => (
+    <article className={styles.board}>
+        <section className={styles.wrapper}
+                 style={{"--rows": board.rows, "--columns": board.columns} as CSSProperties}
+        >
             {[...Array(board.rows)].map((_, rowIdx) =>
                 [...Array(board.columns)].map((_, columnIdx) =>
                     <Field key={`${rowIdx}-${columnIdx}`}/>
                 )
             )}
         </section>
-    )
-}
+    </article>
+)
 
-const Field: React.FC = () => (
+
+const Field = () => (
     <div className={styles.field}>
-        <div className={styles.content}>X</div>
+        <div className={styles.content}>
+
+        </div>
     </div>
 )
