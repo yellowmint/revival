@@ -28,5 +28,15 @@ defmodule Revival.Games.Play do
     |> validate_required([:mode])
     |> validate_inclusion(:mode, ["classic"])
     |> validate_length(:players, max: 2)
+    |> validate_unique_list(:players)
+  end
+
+  def validate_unique_list(changeset, field) do
+    validate_change(changeset, field, fn _, list ->
+      case Enum.uniq(list) do
+        ^list -> []
+        _ -> [{field, "list contains duplication"}]
+      end
+    end)
   end
 end

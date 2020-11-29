@@ -23,11 +23,11 @@ defmodule Revival.Games.Player do
     |> validate_required([:user_id, :name, :rank])
   end
 
-  def get_player(nil, name) do
-    %Player{id: Ecto.UUID.generate, user_id: nil, name: name, rank: 0}
+  def get_player(nil, anonymous_id, name) do
+    %Player{id: anonymous_id, user_id: nil, name: name, rank: 0}
   end
 
-  def get_player(user_id, _name) do
+  def get_player(user_id, nil, _name) do
     case Repo.get_by(Player, user_id: user_id) do
       nil -> create_player(user_id)
       player -> player

@@ -10,14 +10,18 @@ defmodule RevivalWeb.GameChannel do
   end
 
   def handle_in("join_game", %{"name" => name}, socket) do
-    player = Games.get_player(socket.assigns.user_id, name)
+    %{game_id: game_id, user_id: user_id, anonymous_id: anonymous_id} = socket.assigns
 
-    case Games.join(socket.assigns.game_id, player) do
+    player = Games.get_player(user_id, anonymous_id, name)
+
+    case Games.join(game_id, player) do
       {:ok, _game} ->
         reply = {:ok, %{player_id: player.id}}
         socket = assign(socket, :player, player)
         {:reply, reply, socket}
-      {:error, _reason} -> {:reply, :error, socket}
+
+      {:error, _reason} ->
+        {:reply, :error, socket}
     end
   end
 end

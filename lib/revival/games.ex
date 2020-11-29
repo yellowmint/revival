@@ -15,8 +15,8 @@ defmodule Revival.Games do
   def get_play(id), do: Repo.get(Play, id)
   def get_play!(id), do: Repo.get!(Play, id)
 
-  def get_player(id, name) do
-    Player.get_player(id, name)
+  def get_player(user_id, anonymous_id, name) do
+    Player.get_player(user_id, anonymous_id, name)
   end
 
   def join(id, player) do
