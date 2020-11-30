@@ -9,9 +9,14 @@ defmodule Revival.Games.Play do
 
   schema "plays" do
     field :mode, :string
+    field :status, :string
     field :round, :integer
+    field :next_move, :string
+    field :next_move_deadline, :utc_datetime
     field :board, :map
     field :players, {:array, :map}
+    field :started_at, :utc_datetime
+    field :finished_at, :utc_datetime
     field :lock_version, :integer, default: 1
 
     timestamps()
@@ -19,7 +24,7 @@ defmodule Revival.Games.Play do
 
   def new_play(:classic) do
     board = Board.new_board(10, 10)
-    %Play{mode: "classic", round: 0, board: board, players: []}
+    %Play{mode: "classic", status: "joining", board: board, players: []}
   end
 
   @doc false

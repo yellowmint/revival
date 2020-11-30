@@ -10,11 +10,12 @@ defmodule Revival.GamesTest do
       play = Games.create_play(:classic)
 
       assert play.mode == "classic"
-      assert play.round == 1
+      assert play.status == "joining"
       assert play.board == %Board{
                columns: 10,
                rows: 10,
-               units: []
+               units: [],
+               revival_spots: []
              }
       assert play.players == []
     end

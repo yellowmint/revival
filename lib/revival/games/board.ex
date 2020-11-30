@@ -9,11 +9,17 @@ defmodule Revival.Games.Board do
       columns: columns,
       rows: rows,
       units: [],
-      revival_spots: [
-        new_revival_spot(columns, rows, :blue),
-        new_revival_spot(columns, rows, :red)
-      ]
+      revival_spots: []
     }
+  end
+
+  def create_revival_spots(board) do
+    revival_spots = [
+      new_revival_spot(board.columns, board.rows, :blue),
+      new_revival_spot(board.columns, board.rows, :red)
+    ]
+
+    Map.put(board, :revival_spots, revival_spots)
   end
 
   defp new_revival_spot(columns, rows, label) do
