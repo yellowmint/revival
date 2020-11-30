@@ -19,7 +19,7 @@ defmodule Revival.Games.Play do
 
   def new_play(:classic) do
     board = Board.new_board(10, 10)
-    %Play{mode: "classic", round: 1, board: board, players: []}
+    %Play{mode: "classic", round: 0, board: board, players: []}
   end
 
   @doc false
