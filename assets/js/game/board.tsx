@@ -3,17 +3,18 @@ import styles from "./board.module.scss"
 
 interface BoardProps {
     board: TBoard
+    reversed: boolean
 }
 
 export type TBoard = {
     rows: number
     columns: number
-    fields: Array<Array<TUnit>>
+    units: Array<TUnit>
 }
 
 export type TUnit = {}
 
-export const Board = ({board}: BoardProps) => (
+export const Board = ({board, reversed}: BoardProps) => (
     <article className={styles.board}>
         <section className={styles.wrapper}
                  style={{"--rows": board.rows, "--columns": board.columns} as CSSProperties}

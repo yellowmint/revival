@@ -1,0 +1,21 @@
+.player {
+  margin: 30px 0;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f6f0e8;
+  border-radius: 5px;
+
+  .name {
+    font-size: large;
+    font-weight: bold;
+  }
+
+  .rank {
+    color: #a97f13;
+    font-size: small;
+    margin-left: 5px;
+    padding-bottom: 5px;
+  }
+}

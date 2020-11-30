@@ -1,8 +1,8 @@
-import {useEffect, useState} from "react";
-import {Channel, Socket} from "phoenix";
-import {TBoard} from "./board";
-import {TPlayer} from "./join"
+import {useEffect, useState} from "react"
+import {Channel, Socket} from "phoenix"
+import {TBoard} from "./board"
 import {useAuthToken} from "./useAuthToken"
+import {TPlayer} from "./player"
 
 type Game = {
     board: TBoard
