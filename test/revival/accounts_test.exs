@@ -5,26 +5,18 @@ defmodule Revival.AccountsTest do
 
   describe "users" do
     alias Revival.Accounts.User
+    alias Revival.AccountsFactory
 
     @valid_attrs %{email: "some@email.com", name: "some name", password: "some password"}
     @invalid_attrs %{email: nil, name: nil, password: nil}
 
-    def user_fixture(attrs \\ %{}) do
-      {:ok, user} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Accounts.create_user()
-
-      Map.put(user, :password, nil)
-    end
-
     test "list_users/0 returns all users" do
-      user = user_fixture()
+      user = AccountsFactory.insert(:user)
       assert Accounts.list_users() == [user]
     end
 
     test "get_user!/1 returns the user with given id" do
-      user = user_fixture()
+      user = AccountsFactory.insert(:user)
       assert Accounts.get_user!(user.id) == user
     end
 
@@ -40,7 +32,7 @@ defmodule Revival.AccountsTest do
     end
 
     test "change_new_user/1 returns a user changeset" do
-      user = user_fixture()
+      user = AccountsFactory.insert(:user)
       assert %Ecto.Changeset{} = Accounts.change_new_user(user)
     end
   end
