@@ -7,7 +7,7 @@ defmodule RevivalWeb.PlayerSocket do
   def connect(%{"token" => token}, socket, _connect_info) do
     case Phoenix.Token.verify(socket, "user auth", token, max_age: 86400) do
       {:ok, user_id} ->
-        %{id: player_id} = Games.get_player(user_id, nil, "")
+        %{id: player_id} = Revival.Games.get_player(user_id, nil, "")
         socket =
           socket
           |> assign(:user_id, user_id)
