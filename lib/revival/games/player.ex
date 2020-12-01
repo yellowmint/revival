@@ -9,7 +9,7 @@ defmodule Revival.Games.Player do
   @derive {Jason.Encoder, only: [:id, :name, :rank, :user_id, :label]}
 
   def client_encode(player) do
-    Map.take(player, [:name, :rank, :label])
+    Map.take(player, [:id, :name, :rank, :label])
   end
 
   schema "players" do
@@ -32,7 +32,7 @@ defmodule Revival.Games.Player do
     %Player{id: anonymous_id, user_id: nil, name: name, rank: 0}
   end
 
-  def get_player(user_id, nil, _name) do
+  def get_player(user_id, _anonymous_id, _name) do
     case Repo.get_by(Player, user_id: user_id) do
       nil -> create_player(user_id)
       player -> player

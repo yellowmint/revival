@@ -10,7 +10,7 @@ defmodule RevivalWeb.Endpoint do
     signing_salt: "xQOcMTi8"
   ]
 
-  socket "/socket", RevivalWeb.UserSocket,
+  socket "/socket", RevivalWeb.PlayerSocket,
     websocket: true,
     longpoll: false
 

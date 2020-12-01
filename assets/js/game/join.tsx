@@ -5,29 +5,23 @@ import {useAuthToken} from "./useAuthToken"
 interface JoinProps {
     channel: Channel
     playersCount: number
-    playerId: string
-    setPlayerId: React.Dispatch<React.SetStateAction<string>>
+    playerIdx: number | null
 }
 
-export const Join = ({channel, playersCount, playerId, setPlayerId}: JoinProps) => {
+export const Join = ({channel, playersCount, playerIdx}: JoinProps) => {
     const [name, setName] = useState("")
-    const [error, setError] = useState("")
     const {authToken} = useAuthToken()
 
     const join = (event: FormEvent) => {
         event.preventDefault()
-
-        channel.push("join_game", {name: name})
-            .receive("ok", resp => setPlayerId(resp))
-            .receive("error", () => setError("Cannot join game"))
+        channel.push("join_play", {name: name})
     }
 
-    if (playerId || playersCount >= 2) return <></>
+    if (playerIdx || playersCount >= 2) return <></>
 
     return (
         <section>
             <form onSubmit={join}>
-                {error && <div className="alert alert-warning">{error}</div>}
                 {!authToken && <label>
                     Name
                     <input value={name}
