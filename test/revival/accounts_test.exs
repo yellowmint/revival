@@ -1,5 +1,5 @@
 defmodule Revival.AccountsTest do
-  use Revival.DataCase
+  use Revival.DataCase, async: true
 
   alias Revival.Accounts
 

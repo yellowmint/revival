@@ -1,5 +1,6 @@
 defmodule Revival.GamesTest do
-  use Revival.DataCase
+  use Revival.DataCase, async: true
+  doctest Revival.Games
 
   alias Revival.Games
 
