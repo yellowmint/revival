@@ -11,16 +11,21 @@ defmodule RevivalWeb.GameChannel do
 
   def handle_in("join_game", %{"name" => name}, socket) do
     %{game_id: game_id, user_id: user_id, anonymous_id: anonymous_id} = socket.assigns
-
     player = Games.get_player(user_id, anonymous_id, name)
 
-    case Games.join(game_id, player) do
+    case Games.join_play(game_id, player) do
       {:ok, game} ->
+        game = auto_warm_up(game)
         broadcast!(socket, "game_update", game)
         {:reply, {:ok, player.id}, assign(socket, :player, player)}
 
       {:error, _reason} ->
         {:reply, :error, socket}
     end
+  end
+
+  defp auto_warm_up(game) do
+    if Games.can_warm_up?(game), do: Games.warm_up!(game),
+                                 else: game
   end
 end

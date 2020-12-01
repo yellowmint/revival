@@ -18,7 +18,6 @@ defmodule Revival.Games.Board do
       new_revival_spot(board.columns, board.rows, :blue),
       new_revival_spot(board.columns, board.rows, :red)
     ]
-
     Map.put(board, :revival_spots, revival_spots)
   end
 
