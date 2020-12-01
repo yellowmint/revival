@@ -20,7 +20,7 @@ export const Join = ({channel, playersCount, playerIdx}: JoinProps) => {
     if (playerIdx || playersCount >= 2) return <></>
 
     return (
-        <section>
+        <section className="narrow">
             <form onSubmit={join}>
                 {!authToken && <label>
                     Name

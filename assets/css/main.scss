@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Texturina&display=swap');
+
+html, body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Texturina', serif;
+}
+
+.page-header {
+  flex-shrink: 0;
+
+  .main-header {
+    font-size: 20px;
+    text-decoration: underline;
+  }
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+.page-footer {
+  flex-shrink: 0;
+  padding: 20px;
+}
+
+a {
+  color: #285a73;
+  text-decoration: none;
+}
+
+.form-group {
+  margin: 10px 0;
+}
+
+input, button {
+  box-sizing: border-box;
+  border-radius: 5px;
+  padding: 8px;
+  width: 100%;
+}
+
+input {
+  margin: 5px 0;
+  border: 1px solid lightgray;
+}
+
+button {
+  margin: 15px 0;
+  border: none;
+  background-color: #bbd0db;
+  transition: 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #c9e0ec;
+  }
+}
