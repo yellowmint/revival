@@ -31,11 +31,11 @@ defmodule Revival.Games do
     |> Repo.update()
   end
 
-  def can_warm_up?(play) do
-    play.status == "joining" && Enum.count(play.players) == 2
-  end
+  def can_warm_up?(play), do: Play.can_warm_up?(play)
 
   def warm_up!(play) do
+    if !can_warm_up?(play), do: raise "Warm up not possible"
+
     play
     |> Play.changeset(Play.warm_up_play(play))
     |> Repo.update!()

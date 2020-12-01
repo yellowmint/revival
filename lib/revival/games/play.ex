@@ -28,6 +28,10 @@ defmodule Revival.Games.Play do
     %Play{mode: "classic", status: "joining", board: board, players: []}
   end
 
+  def can_warm_up?(play) do
+    play.status == "joining" && Enum.count(play.players) == 2
+  end
+
   def warm_up_play(play) do
     play = Map.put(play, :players, Enum.shuffle(play.players))
 
@@ -51,7 +55,6 @@ defmodule Revival.Games.Play do
     |> Map.put(:next_move_deadline, NaiveDateTime.add(NaiveDateTime.utc_now(), 5))
   end
 
-  @doc false
   def changeset(play, attrs \\ %{}) do
     play
     |> cast(attrs, [:mode, :status, :round, :next_move, :next_move_deadline, :board, :players,
@@ -59,20 +62,22 @@ defmodule Revival.Games.Play do
     |> validate_required([:mode, :status, :board])
     |> validate_inclusion(:mode, ["classic"])
     |> validate_inclusion(:status, ["joining", "warming_up", "playing", "finished"])
-    |> validate_length(:players, max: 2)
-    |> validate_unique_list(:players)
+    |> validate_status(play.status)
     |> optimistic_lock(:lock_version)
   end
 
-  def validate_unique_list(changeset, field) do
-    validate_change(changeset, field, fn _, list ->
-      ids = Enum.map(list, fn x -> x.id end)
+  def validate_status(changeset, "joining") do
+    changeset
+    |> validate_inclusion(:status, ["joining", "warming_up"])
+    |> validate_length(:players, max: 2)
+    |> Utils.validate_unique_list_items_by_id(:players)
+  end
 
-      case Enum.uniq(ids) do
-        ^ids -> []
-        _ -> [{field, "list contains duplication"}]
-      end
-    end)
+  def validate_status(changeset, "warming_up") do
+    changeset
+    |> validate_inclusion(:status, ["warming_up", "playing"])
+    |> validate_required([:players, :round, :next_move, :next_move_deadline, :started_at])
+    |> validate_length(:players, is: 2)
   end
 
   def unify_keys(play) do
