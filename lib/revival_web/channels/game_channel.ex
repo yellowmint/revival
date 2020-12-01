@@ -5,7 +5,7 @@ defmodule RevivalWeb.GameChannel do
   def join("game:" <> id, _params, socket) do
     case Games.get_play(id) do
       nil -> {:error, %{reason: "game not found"}}
-      game -> {:ok, game, assign(socket, :game_id, game.id)}
+      game -> {:ok, Games.client_encode(game), assign(socket, :game_id, game.id)}
     end
   end
 
@@ -16,7 +16,7 @@ defmodule RevivalWeb.GameChannel do
     case Games.join_play(game_id, player) do
       {:ok, game} ->
         game = auto_warm_up(game)
-        broadcast!(socket, "game_update", game)
+        broadcast!(socket, "game_update", Games.client_encode(game))
         {:reply, {:ok, player.id}, assign(socket, :player, player)}
 
       {:error, _reason} ->

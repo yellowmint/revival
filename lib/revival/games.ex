@@ -114,4 +114,12 @@ defmodule Revival.Games do
     |> Play.changeset(Play.warm_up_play(play))
     |> Repo.update!()
   end
+
+  @doc """
+  Returns play that can be easily converted to JSON and safely send to external client.
+  """
+  def client_encode(play) do
+    play
+    |> Map.put(:players, Enum.map(play.players, &Player.client_encode/1))
+  end
 end

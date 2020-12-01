@@ -8,6 +8,10 @@ defmodule Revival.Games.Player do
   @primary_key {:id, :binary_id, autogenerate: true}
   @derive {Jason.Encoder, only: [:id, :name, :rank, :user_id, :label]}
 
+  def client_encode(player) do
+    Map.take(player, [:name, :rank, :label])
+  end
+
   schema "players" do
     field :name, :string
     field :rank, :integer
