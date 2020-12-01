@@ -6,12 +6,13 @@ defmodule Revival.Games.Player do
   alias Revival.Games.Player
 
   @primary_key {:id, :binary_id, autogenerate: true}
-  @derive {Jason.Encoder, only: [:id, :name, :rank, :user_id]}
+  @derive {Jason.Encoder, only: [:id, :name, :rank, :user_id, :label]}
 
   schema "players" do
     field :name, :string
     field :rank, :integer
     field :user_id, :binary_id
+    field(:label, :string, virtual: true)
 
     timestamps()
   end
