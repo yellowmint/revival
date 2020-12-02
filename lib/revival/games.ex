@@ -63,6 +63,11 @@ defmodule Revival.Games do
   def get_player(user_id, anonymous_id, name), do: Player.get_player(user_id, anonymous_id, name)
 
   @doc """
+  Retrieves registered player for given `id` or rises execption.
+  """
+  def get_player!(id), do: Repo.get!(Player, id)
+
+  @doc """
   Join given `player` to play of given `id`. One player cannot join the same play twice.
 
   ## Examples

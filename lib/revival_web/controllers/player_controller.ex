@@ -9,7 +9,7 @@ defmodule RevivalWeb.PlayerController do
   end
 
   def show(conn, %{"id" => id}) do
-    player = Games.get_player(id, nil, "")
+    player = Games.get_player!(id)
     render(conn, "show.html", player: player)
   end
 end
