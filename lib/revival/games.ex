@@ -122,7 +122,7 @@ defmodule Revival.Games do
     iex> player2 = Revival.Games.get_player(nil, "9b934df4-0d2b-4201-b910-aedf21e0e409", "Harald")
     iex> {:ok, play} = Revival.Games.join_play(play.id, player1)
     iex> {:ok, play} = Revival.Games.join_play(play.id, player2)
-    iex> %Revival.Games.Play{status: "warming_up"} = Revival.Games.warm_up!(play)
+    iex> %Revival.Games.Play{status: "warming_up"} = Revival.Games.warm_up!(play, fn x -> x end)
 
   """
   def warm_up!(play, update_callback) do
