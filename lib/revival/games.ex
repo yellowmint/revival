@@ -4,13 +4,17 @@ defmodule Revival.Games do
   """
   import Ecto.Query, warn: false
   alias Revival.Repo
-  alias Revival.Games.{Play, Player}
+  alias Revival.Games.{Play, Player, Timer}
 
   @doc """
   Returns the players ranking.
   """
   def ranking do
-    Repo.all(from p in Player, order_by: [desc: p.rank])
+    Repo.all(
+      from p in Player, order_by: [
+        desc: p.rank
+      ]
+    )
   end
 
   @doc """
@@ -50,7 +54,9 @@ defmodule Revival.Games do
   @doc """
   Same as `get_play/1` but rises exception when cannot find play for given `id`.
   """
-  def get_play!(id), do: Repo.get!(Play, id) |> Play.unify_keys()
+  def get_play!(id),
+      do: Repo.get!(Play, id)
+          |> Play.unify_keys()
 
   @doc """
   Retrieves registered or anonymous player.
@@ -119,12 +125,24 @@ defmodule Revival.Games do
     iex> %Revival.Games.Play{status: "warming_up"} = Revival.Games.warm_up!(play)
 
   """
-  def warm_up!(play) do
+  def warm_up!(play, update_callback) do
     if !can_warm_up?(play), do: raise "Warm up not possible"
+
+    {:ok, pid} =
+      %Timer{
+        play_id: play.id,
+        callback: update_callback,
+        timeout: Play.round_time(play.mode) * 1000 + 100
+      }
+      |> Timer.start_link()
 
     play
     |> Play.changeset(Play.warm_up_play(play))
     |> Repo.update!()
+  end
+
+  def timeout(play_id) do
+    get_play!(play_id)
   end
 
   @doc """
