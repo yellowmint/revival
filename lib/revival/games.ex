@@ -128,16 +128,16 @@ defmodule Revival.Games do
   def warm_up!(play, update_callback) do
     if !can_warm_up?(play), do: raise "Warm up not possible"
 
-    {:ok, pid} =
+    {:ok, pid} = Timer.start_link(
       %Timer{
         play_id: play.id,
         callback: update_callback,
         timeout: Play.round_time(play.mode) * 1000 + 100
       }
-      |> Timer.start_link()
+    )
 
     play
-    |> Play.changeset(Play.warm_up_play(play))
+    |> Play.changeset(Play.warm_up_play(play, pid))
     |> Repo.update!()
   end
 
@@ -150,6 +150,7 @@ defmodule Revival.Games do
   """
   def client_encode(play) do
     play
+    |> Map.put(:timer_pid, nil)
     |> Map.put(:round_time, Play.round_time(play.mode))
     |> Map.put(:players, Enum.map(play.players, &Player.client_encode/1))
   end
