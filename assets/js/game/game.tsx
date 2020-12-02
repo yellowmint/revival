@@ -18,7 +18,7 @@ export const Game = () => {
                   playersCount={game.players.length}
                   playerIdx={playerIdx}/>
 
-            <Timer startedAt={game.started_at} nextMoveDeadline={game.next_move_deadline}/>
+            <Timer startedAt={game.started_at} nextMoveDeadline={game.next_move_deadline} roundTime={game.round_time}/>
             <Player player={game.players[0]} nextMove={game.next_move}/>
             <Board board={game.board} reversed={reversed}/>
             <Player player={game.players[1]} nextMove={game.next_move}/>

@@ -6,12 +6,13 @@ defmodule Revival.Games.Play do
   alias Revival.Games.{Play, Board}
 
   @primary_key {:id, :binary_id, autogenerate: true}
-  @derive {Jason.Encoder, only: [:id, :mode, :board, :players, :started_at, :round, :next_move, :next_move_deadline]}
+  @derive {Jason.Encoder, only: [:id, :mode, :board, :players, :started_at, :round, :round_time, :next_move, :next_move_deadline]}
 
   schema "plays" do
     field :mode, :string
     field :status, :string
     field :round, :integer
+    field :round_time, :integer, virtual: true
     field :next_move, :string
     field :next_move_deadline, :utc_datetime
     field :board, :map
@@ -37,7 +38,7 @@ defmodule Revival.Games.Play do
 
     play
     |> Map.put(:status, "warming_up")
-    |> Map.put(:started_at, NaiveDateTime.add(NaiveDateTime.utc_now(), 5))
+    |> Map.put(:started_at, next_round_deadline(play))
     |> Map.put(:players, put_labels_to_players(play.players))
     |> Map.put(:board, Board.create_revival_spots(play.board))
     |> Map.from_struct()
@@ -52,7 +53,7 @@ defmodule Revival.Games.Play do
     |> Map.put(:status, "playing")
     |> Map.put(:round, 1)
     |> Map.put(:next_move, Enum.random([:blue, :red]))
-    |> Map.put(:next_move_deadline, NaiveDateTime.add(NaiveDateTime.utc_now(), 5))
+    |> Map.put(:next_move_deadline, next_round_deadline(play))
   end
 
   def changeset(play, attrs \\ %{}) do
@@ -78,6 +79,13 @@ defmodule Revival.Games.Play do
     |> validate_inclusion(:status, ["warming_up", "playing"])
     |> validate_required([:players, :round, :next_move, :next_move_deadline, :started_at])
     |> validate_length(:players, is: 2)
+  end
+
+  def round_time("classic"), do: 10
+
+  def next_round_deadline(%{mode: mode}) do
+    NaiveDateTime.utc_now()
+    |> NaiveDateTime.add(round_time(mode))
   end
 
   def unify_keys(play) do

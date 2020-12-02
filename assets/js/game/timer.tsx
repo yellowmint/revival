@@ -1,13 +1,14 @@
-import React, {useEffect, useState} from "react"
+import React, {CSSProperties, useEffect, useState} from "react"
 import styles from "./timer.module.scss"
 import {differenceInMilliseconds, parseISO} from "date-fns"
 
 interface TimerProps {
     startedAt: string
     nextMoveDeadline: string
+    roundTime: number
 }
 
-export const Timer = ({startedAt, nextMoveDeadline}: TimerProps) => {
+export const Timer = ({startedAt, nextMoveDeadline, roundTime}: TimerProps) => {
     const [counter, setCounter] = useState<number>()
 
     useEffect(() => {
@@ -32,7 +33,9 @@ export const Timer = ({startedAt, nextMoveDeadline}: TimerProps) => {
     return (
         <section className={styles.timer}>
             {Math.ceil(counter / 1000)}
-            {counter > 0 && <span className={styles.hourglass}/>}
+            {counter > 0
+                ? <span className={styles.hourglass} style={{"--roundTime": `${roundTime}s`} as CSSProperties}/>
+                : <span className={styles.hourglassPlaceholder}/>}
         </section>
     )
 }
