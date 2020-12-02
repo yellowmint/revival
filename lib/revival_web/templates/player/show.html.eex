@@ -1,14 +1,13 @@
 <section class="narrow">
     <h1>Player details</h1>
-
     <ul>
         <li>
             <strong>Name:</strong>
-            <%= @user.name %>
+            <%= @player.name %>
         </li>
         <li>
             <strong>Rank:</strong>
-            <%= 0 %>
+            <%= @player.rank %>
         </li>
     </ul>
 </section>

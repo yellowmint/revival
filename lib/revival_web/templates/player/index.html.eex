@@ -1,0 +1,18 @@
+<h1>Players ranking</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th><strong>Name</strong></th>
+        <th><strong>Rank</strong></th>
+    </tr>
+    </thead>
+    <tbody>
+    <%= for player <- @players do %>
+    <tr>
+        <td><%= player.name %></td>
+        <td><%= player.rank %></td>
+    </tr>
+    <% end %>
+    </tbody>
+</table>

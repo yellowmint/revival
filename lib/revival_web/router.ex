@@ -19,9 +19,11 @@ defmodule RevivalWeb.Router do
     pipe_through :browser
 
     live "/", PageLive, :index
-    resources "/users", UserController, only: [:index, :new, :create, :show]
+
+    resources "/users", UserController, only: [:new, :create]
     resources "/sessions", SessionController, only: [:new, :create, :delete], singleton: true
 
+    resources "/players", PlayerController, only: [:index, :show]
     resources "/games", GameController, only: [:create, :show]
   end
 

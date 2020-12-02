@@ -7,6 +7,13 @@ defmodule Revival.Games do
   alias Revival.Games.{Play, Player}
 
   @doc """
+  Returns the players ranking.
+  """
+  def ranking do
+    Repo.all(from p in Player, order_by: [desc: p.rank])
+  end
+
+  @doc """
   Creates new play in given mode. For now only allowed mode is `:classic`.
   Returns created play.
 
