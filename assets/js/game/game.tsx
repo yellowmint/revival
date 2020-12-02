@@ -17,9 +17,9 @@ export const Game = () => {
                   playersCount={game.players.length}
                   playerIdx={playerIdx}/>
 
-            <Player player={game.players[0]}/>
+            <Player player={game.players[0]} nextMove={game.next_move}/>
             <Board board={game.board} reversed={reversed}/>
-            <Player player={game.players[1]}/>
+            <Player player={game.players[1]} nextMove={game.next_move}/>
         </article>
     )
 }

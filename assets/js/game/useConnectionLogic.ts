@@ -7,6 +7,9 @@ import {TPlayer} from "./player"
 export type TGame = {
     board: TBoard
     players: Array<TPlayer>
+    started_at: string
+    next_move: string
+    next_move_deadline: string
 }
 
 export const useConnectionLogic = () => {

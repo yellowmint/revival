@@ -6,7 +6,7 @@ defmodule Revival.Games.Play do
   alias Revival.Games.{Play, Board}
 
   @primary_key {:id, :binary_id, autogenerate: true}
-  @derive {Jason.Encoder, only: [:id, :mode, :round, :board, :players]}
+  @derive {Jason.Encoder, only: [:id, :mode, :board, :players, :started_at, :round, :next_move, :next_move_deadline]}
 
   schema "plays" do
     field :mode, :string

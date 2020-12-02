@@ -1,21 +1,46 @@
 .player {
   margin: 30px 0;
-  padding: 10px;
+  padding: 13px 15px 15px 15px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  background-color: #e5e0cf;
+  justify-content: space-around;
+  background-color: #efeedb;
   border-radius: 5px;
 
-  .name {
-    font-size: large;
-    font-weight: bold;
+  .playerDetails {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .name {
+      font-size: large;
+      font-weight: bold;
+    }
+
+    .rank {
+      color: #b18414;
+      font-size: small;
+      margin-left: 5px;
+      padding-bottom: 5px;
+    }
   }
 
-  .rank {
-    color: #b18414;
-    font-size: small;
-    margin-left: 5px;
-    padding-bottom: 5px;
+  .money {
+    color: #a57402;
+  }
+
+  .mana {
+    color: #0183ab;
+  }
+
+  .currentMove {
+    .dot {
+      display: block;
+      width: 12px;
+      height: 12px;
+      margin-top: 4px;
+      border-radius: 50px;
+      background-color: #a74644;
+    }
   }
 }
