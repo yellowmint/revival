@@ -3,6 +3,7 @@
   border-width: 1px 1px 0 0;
   position: relative;
   width: 100%;
+  box-sizing: border-box;
 
   &:after {
     content: "";

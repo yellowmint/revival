@@ -1,5 +1,5 @@
-<h1>Welcome</h1>
+<h1>Welcome voyager!</h1>
 
-<%= link "New Game", to: Routes.game_path(@socket, :create), method: :post, class: "button" %>
-<br>
-<%= link "Ranking", to: Routes.user_path(@socket, :index) %>
+<%= link "New Game", to: Routes.game_path(@socket, :create), method: :post %>
+<br><br>
+<%= link "Ranking", to: Routes.player_path(@socket, :index) %>

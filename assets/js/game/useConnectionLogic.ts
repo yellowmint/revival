@@ -4,13 +4,14 @@ import {TBoard} from "./board"
 import {useAuthToken} from "./useAuthToken"
 import {TPlayer} from "./player"
 
-type Game = {
+export type TGame = {
     board: TBoard
     players: Array<TPlayer>
 }
 
 export const useConnectionLogic = () => {
-    const [game, setGame] = useState<Game>()
+    const [game, setGame] = useState<TGame>()
+    const [playerId, setPlayerId] = useState("")
     const [channel, setChannel] = useState<Channel>()
     const {authToken} = useAuthToken()
 
@@ -24,9 +25,13 @@ export const useConnectionLogic = () => {
         const {pathname} = window.location
         const id = pathname.substring(pathname.lastIndexOf('/') + 1)
 
-        const channelHandle = socket.channel("game:" + id)
+        const channelHandle = socket.channel("play:" + id)
         channelHandle.join()
-            .receive("ok", resp => setGame(resp))
+            .receive("ok", ({play, player_id}: {play: TGame, player_id: string}) => {
+                console.log("play_update", play, player_id)
+                setGame(play)
+                setPlayerId(player_id)
+            })
             .receive("error", resp => console.log("Unable to join", resp))
 
         setChannel(channelHandle)
@@ -35,14 +40,12 @@ export const useConnectionLogic = () => {
 
     useEffect(() => {
         if (!channel) return
-
-        const ref = channel.on("game_update", resp => {
-            console.log("game_update", resp)
-            setGame(resp)
+        const ref = channel.on("play_update", (play: TGame) => {
+            console.log("play_update", play)
+            setGame(play)
         })
-
-        return () => channel.off("game_update", ref)
+        return () => channel.off("play_update", ref)
     }, [channel])
 
-    return {game, channel}
+    return {game, playerId, channel}
 }

@@ -10,11 +10,6 @@ defmodule Revival.AccountsTest do
     @valid_attrs %{email: "some@email.com", name: "some name", password: "some password"}
     @invalid_attrs %{email: nil, name: nil, password: nil}
 
-    test "list_users/0 returns all users" do
-      user = AccountsFactory.insert(:user)
-      assert Accounts.list_users() == [user]
-    end
-
     test "get_user!/1 returns the user with given id" do
       user = AccountsFactory.insert(:user)
       assert Accounts.get_user!(user.id) == user

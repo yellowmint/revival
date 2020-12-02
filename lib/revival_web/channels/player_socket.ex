@@ -1,18 +1,19 @@
-defmodule RevivalWeb.UserSocket do
+defmodule RevivalWeb.PlayerSocket do
   use Phoenix.Socket
 
-  channel "game:*", RevivalWeb.GameChannel
+  channel "play:*", RevivalWeb.PlayChannel
 
   @impl true
   def connect(%{"token" => token}, socket, _connect_info) do
     case Phoenix.Token.verify(socket, "user auth", token, max_age: 86400) do
       {:ok, user_id} ->
+        %{id: player_id} = Revival.Games.get_player(user_id, nil, "")
         socket =
           socket
           |> assign(:user_id, user_id)
-          |> assign(:anonymous_id, nil)
-
+          |> assign(:player_id, player_id)
         {:ok, socket}
+
       {:error, _reason} -> {:error, "invalid token"}
     end
   end
@@ -22,14 +23,11 @@ defmodule RevivalWeb.UserSocket do
     socket =
       socket
       |> assign(:user_id, nil)
-      |> assign(:anonymous_id, Ecto.UUID.generate())
+      |> assign(:player_id, Ecto.UUID.generate())
 
     {:ok, socket}
   end
 
   @impl true
-  def id(%{assigns: %{user_id: user_id}}), do: "user_socket:#{user_id}"
-
-  @impl true
-  def id(_socket), do: nil
+  def id(%{assigns: %{player_id: player_id}}), do: "player_socket:#{player_id}"
 end

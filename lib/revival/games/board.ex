@@ -26,5 +26,5 @@ defmodule Revival.Games.Board do
   end
 
   defp revival_line(rows, :blue), do: round(rows / 4)
-  defp revival_line(rows, :red), do: rows - revival_line(rows, :blue)
+  defp revival_line(rows, :red), do: rows - revival_line(rows, :blue) + 1
 end

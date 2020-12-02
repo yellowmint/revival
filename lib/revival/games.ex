@@ -7,6 +7,13 @@ defmodule Revival.Games do
   alias Revival.Games.{Play, Player}
 
   @doc """
+  Returns the players ranking.
+  """
+  def ranking do
+    Repo.all(from p in Player, order_by: [desc: p.rank])
+  end
+
+  @doc """
   Creates new play in given mode. For now only allowed mode is `:classic`.
   Returns created play.
 
@@ -54,6 +61,11 @@ defmodule Revival.Games do
 
   """
   def get_player(user_id, anonymous_id, name), do: Player.get_player(user_id, anonymous_id, name)
+
+  @doc """
+  Retrieves registered player for given `id` or rises execption.
+  """
+  def get_player!(id), do: Repo.get!(Player, id)
 
   @doc """
   Join given `player` to play of given `id`. One player cannot join the same play twice.
@@ -113,5 +125,13 @@ defmodule Revival.Games do
     play
     |> Play.changeset(Play.warm_up_play(play))
     |> Repo.update!()
+  end
+
+  @doc """
+  Returns play that can be easily converted to JSON and safely send to external client.
+  """
+  def client_encode(play) do
+    play
+    |> Map.put(:players, Enum.map(play.players, &Player.client_encode/1))
   end
 end
