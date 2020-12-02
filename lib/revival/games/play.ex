@@ -61,8 +61,9 @@ defmodule Revival.Games.Play do
     play
     |> Map.put(:status, "playing")
     |> Map.put(:round, 1)
-    |> Map.put(:next_move, Enum.random([:blue, :red]))
+    |> Map.put(:next_move, Enum.random(["blue", "red"]))
     |> Map.put(:next_move_deadline, next_round_deadline(play))
+    |> Map.from_struct()
   end
 
   def changeset(play, attrs \\ %{}) do
@@ -88,6 +89,12 @@ defmodule Revival.Games.Play do
     |> validate_inclusion(:status, ["warming_up", "playing"])
     |> validate_required([:players, :started_at, :timer_pid])
     |> validate_length(:players, is: 2)
+  end
+
+  def validate_status(changeset, "playing") do
+    changeset
+    |> validate_inclusion(:status, ["playing", "finished"])
+    |> validate_required([:round, :next_move, :next_move_deadline ])
   end
 
   def round_time("classic"), do: 10
