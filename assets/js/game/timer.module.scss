@@ -1,0 +1,30 @@
+.timer {
+  font-size: 25px;
+  text-align: center;
+
+  .hourglassPlaceholder {
+    display: block;
+    height: 5px;
+    margin-top: 10px;
+  }
+
+  .hourglass {
+    display: block;
+    margin: 10px auto 0 auto;
+    height: 5px;
+    max-width: 100%;
+    border-radius: 5px;
+    background-color: #946100;
+    animation: shrinking forwards linear;
+    animation-duration: var(--roundTime);
+  }
+
+  @keyframes shrinking {
+    0% {
+      width: 100%;
+    }
+    100% {
+      width: 0;
+    }
+  }
+}

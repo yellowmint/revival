@@ -4,13 +4,17 @@ defmodule Revival.Games do
   """
   import Ecto.Query, warn: false
   alias Revival.Repo
-  alias Revival.Games.{Play, Player}
+  alias Revival.Games.{Play, Player, Timer}
 
   @doc """
   Returns the players ranking.
   """
   def ranking do
-    Repo.all(from p in Player, order_by: [desc: p.rank])
+    Repo.all(
+      from p in Player, order_by: [
+        desc: p.rank
+      ]
+    )
   end
 
   @doc """
@@ -50,7 +54,9 @@ defmodule Revival.Games do
   @doc """
   Same as `get_play/1` but rises exception when cannot find play for given `id`.
   """
-  def get_play!(id), do: Repo.get!(Play, id) |> Play.unify_keys()
+  def get_play!(id),
+      do: Repo.get!(Play, id)
+          |> Play.unify_keys()
 
   @doc """
   Retrieves registered or anonymous player.
@@ -116,15 +122,41 @@ defmodule Revival.Games do
     iex> player2 = Revival.Games.get_player(nil, "9b934df4-0d2b-4201-b910-aedf21e0e409", "Harald")
     iex> {:ok, play} = Revival.Games.join_play(play.id, player1)
     iex> {:ok, play} = Revival.Games.join_play(play.id, player2)
-    iex> %Revival.Games.Play{status: "warming_up"} = Revival.Games.warm_up!(play)
+    iex> %Revival.Games.Play{status: "warming_up"} = Revival.Games.warm_up!(play, fn x -> x end)
 
   """
-  def warm_up!(play) do
+  def warm_up!(play, update_callback) do
     if !can_warm_up?(play), do: raise "Warm up not possible"
 
+    {:ok, pid} = Timer.start_link(
+      %Timer{
+        play_id: play.id,
+        callback: update_callback,
+        timeout: Play.round_time(play.mode) * 1000 + 100
+      }
+    )
+
     play
-    |> Play.changeset(Play.warm_up_play(play))
+    |> Play.changeset(Play.warm_up_play(play, pid))
     |> Repo.update!()
+  end
+
+  def timeout(play_id) do
+    get_play!(play_id)
+    |> handle_timeout()
+  end
+
+  defp handle_timeout(%{status: "warming_up"} = play) do
+    play =
+      play
+      |> Play.changeset(Play.start_play(play))
+      |> Repo.update!()
+
+    {:next, play}
+  end
+
+  defp handle_timeout(%{status: "playing"} = play) do
+    {:stop, play}
   end
 
   @doc """
@@ -132,6 +164,8 @@ defmodule Revival.Games do
   """
   def client_encode(play) do
     play
+    |> Map.put(:timer_pid, nil)
+    |> Map.put(:round_time, Play.round_time(play.mode))
     |> Map.put(:players, Enum.map(play.players, &Player.client_encode/1))
   end
 end

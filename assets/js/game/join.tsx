@@ -1,14 +1,15 @@
 import React, {FormEvent, useState} from "react"
 import {Channel} from "phoenix"
 import {useAuthToken} from "./useAuthToken"
+import {TPlayer} from "./player"
 
 interface JoinProps {
     channel: Channel
-    playersCount: number
+    players: Array<TPlayer>
     playerIdx: number | null
 }
 
-export const Join = ({channel, playersCount, playerIdx}: JoinProps) => {
+export const Join = ({channel, players, playerIdx}: JoinProps) => {
     const [name, setName] = useState("")
     const {authToken} = useAuthToken()
 
@@ -17,7 +18,15 @@ export const Join = ({channel, playersCount, playerIdx}: JoinProps) => {
         channel.push("join_play", {name: name})
     }
 
-    if (playerIdx || playersCount >= 2) return <></>
+    const playersCount = players.filter(x => x).length
+
+    if (playersCount >= 2) return <></>
+
+    if (playerIdx !== null) return (
+        <section className="narrow text-center">
+            <p>Waiting for opponent to join the game.</p>
+        </section>
+    )
 
     return (
         <section className="narrow">

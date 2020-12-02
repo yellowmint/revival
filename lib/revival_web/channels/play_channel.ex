@@ -17,17 +17,23 @@ defmodule RevivalWeb.PlayChannel do
 
     case Games.join_play(play_id, player) do
       {:ok, play} ->
-        play = auto_warm_up(play)
-        broadcast!(socket, "play_update", Games.client_encode(play))
+        auto_warm_up(play, socket)
+        |> play_update(socket)
         {:noreply, socket}
 
-      {:error, _reason} ->
-        {:reply, :error, socket}
+      {:error, _reason} -> {:reply, :error, socket}
     end
   end
 
-  defp auto_warm_up(play) do
-    if Games.can_warm_up?(play), do: Games.warm_up!(play),
-                                 else: play
+  defp auto_warm_up(play, socket) do
+    if Games.can_warm_up?(play) do
+      Games.warm_up!(play, fn (play) -> play_update(play, socket) end)
+    else
+      play
+    end
+  end
+
+  defp play_update(play, socket) do
+    broadcast!(socket, "play_update", Games.client_encode(play))
   end
 end

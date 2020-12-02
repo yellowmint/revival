@@ -3,6 +3,8 @@ import {Board} from "./board"
 import {TGame, useConnectionLogic} from "./useConnectionLogic"
 import {Join} from "./join"
 import {Player} from "./player"
+import {Timer} from "./timer"
+import {Round} from "./round"
 
 export const Game = () => {
     const {game, playerId, channel} = useConnectionLogic()
@@ -14,12 +16,15 @@ export const Game = () => {
     return (
         <article>
             <Join channel={channel}
-                  playersCount={game.players.length}
+                  players={game.players}
                   playerIdx={playerIdx}/>
 
-            <Player player={game.players[0]}/>
+            <Round round={game.round}/>
+            <Timer startedAt={game.started_at} nextMoveDeadline={game.next_move_deadline} roundTime={game.round_time}/>
+
+            <Player player={game.players[0]} nextMove={game.next_move}/>
             <Board board={game.board} reversed={reversed}/>
-            <Player player={game.players[1]}/>
+            <Player player={game.players[1]} nextMove={game.next_move}/>
         </article>
     )
 }
