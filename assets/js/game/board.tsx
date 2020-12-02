@@ -28,7 +28,7 @@ export const Board = ({board, reversed}: BoardProps) => {
         board.revival_spots.forEach(({column, row}) => {
             getField(board, reversed, column, row)?.classList.add(fieldStyles.revivalSpot)
         })
-    }, [board])
+    }, [board, reversed])
 
     return (
         <article className={styles.board}>

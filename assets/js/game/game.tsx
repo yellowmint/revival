@@ -7,7 +7,7 @@ import {Player} from "./player"
 export const Game = () => {
     const {game, playerId, channel} = useConnectionLogic()
 
-    if (!game || !channel) return <div>Loading</div>
+    if (!game || !playerId || !channel) return <div>Loading</div>
 
     const {playerIdx, reversed} = determinePlayer(game, playerId)
 
