@@ -9,5 +9,15 @@
     max-width: 100%;
     border-radius: 5px;
     background-color: #946100;
+    animation: shrinking 5s forwards linear;
+  }
+
+  @keyframes shrinking {
+    0% {
+      width: 100%;
+    }
+    100% {
+      width: 0;
+    }
   }
 }

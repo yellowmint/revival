@@ -21,7 +21,7 @@ export const Timer = ({startedAt, nextMoveDeadline}: TimerProps) => {
             }
 
             setCounter(diff)
-            setTimeout(update, 20)
+            setTimeout(update, 1000)
         }
 
         update()
@@ -32,7 +32,7 @@ export const Timer = ({startedAt, nextMoveDeadline}: TimerProps) => {
     return (
         <section className={styles.timer}>
             {Math.ceil(counter / 1000)}
-            <span style={{width: `${(counter / 5000) * 100}%`}} className={styles.hourglass}/>
+            {counter > 0 && <span className={styles.hourglass}/>}
         </section>
     )
 }
