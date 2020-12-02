@@ -21,9 +21,12 @@ defmodule Revival.Games.Timer do
 
   @impl true
   def handle_info(:timeout, state) do
-    play = Games.timeout(state.play_id)
-    state.callback.(play)
+    case Games.timeout(state.play_id) do
+      {:next, play} ->
+        state.callback.(play)
+        {:noreply, state, state.timeout}
 
-    {:noreply, state, state.timeout}
+      {:stop, _play} -> {:stop, :play_stopped, state}
+    end
   end
 end

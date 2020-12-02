@@ -147,13 +147,16 @@ defmodule Revival.Games do
   end
 
   defp handle_timeout(%{status: "warming_up"} = play) do
-    play
-    |> Play.changeset(Play.start_play(play))
-    |> Repo.update!()
+    play =
+      play
+      |> Play.changeset(Play.start_play(play))
+      |> Repo.update!()
+
+    {:next, play}
   end
 
   defp handle_timeout(%{status: "playing"} = play) do
-    play
+    {:stop, play}
   end
 
   @doc """
