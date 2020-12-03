@@ -10,8 +10,7 @@ defmodule Revival.Games.Play do
     Jason.Encoder,
     only: [:id, :mode, :status, :board, :players, :started_at,
       :round, :round_time,
-      :next_move, :next_move_deadline,
-      :timer_pid, :winner]
+      :next_move, :next_move_deadline, :winner]
   }
 
   schema "plays" do

@@ -167,7 +167,6 @@ defmodule Revival.Games do
   """
   def client_encode(play) do
     play
-    |> Map.put(:timer_pid, nil)
     |> Map.put(:round_time, Play.round_time(play.mode))
     |> Map.put(:players, Enum.map(play.players, &Player.client_encode/1))
   end
