@@ -69,7 +69,7 @@ defmodule Revival.Games do
   def get_player(user_id, anonymous_id, name), do: Player.get_player(user_id, anonymous_id, name)
 
   @doc """
-  Retrieves registered player for given `id` or rises execption.
+  Retrieves registered player for given `id` or rises exception.
   """
   def get_player!(id), do: Repo.get!(Player, id)
 
@@ -128,12 +128,8 @@ defmodule Revival.Games do
   def warm_up!(play, update_callback) do
     if !can_warm_up?(play), do: raise "Warm up not possible"
 
-    {:ok, pid} = Timer.start_link(
-      %Timer{
-        play_id: play.id,
-        callback: update_callback,
-        timeout: Play.round_time(play.mode) * 1000 + 100
-      }
+    {:ok, pid} = Timer.start(
+      %Timer{play_id: play.id, callback: update_callback, timeout: Play.round_time(play.mode) * 1000 + 100}
     )
 
     play
