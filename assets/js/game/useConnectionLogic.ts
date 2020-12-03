@@ -5,6 +5,7 @@ import {useAuthToken} from "./useAuthToken"
 import {TPlayer} from "./player"
 
 export type TGame = {
+    status: string
     board: TBoard
     players: Array<TPlayer>
     started_at: string

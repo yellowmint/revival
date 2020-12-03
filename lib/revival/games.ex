@@ -137,7 +137,7 @@ defmodule Revival.Games do
     )
 
     play
-    |> Play.changeset(Play.warm_up_play(play, pid))
+    |> Play.changeset(Play.warm_up_changes(play, pid))
     |> Repo.update!()
   end
 
@@ -149,13 +149,20 @@ defmodule Revival.Games do
   defp handle_timeout(%{status: "warming_up"} = play) do
     play =
       play
-      |> Play.changeset(Play.start_play(play))
+      |> Play.changeset(Play.start_changes(play))
       |> Repo.update!()
 
     {:next, play}
   end
 
   defp handle_timeout(%{status: "playing"} = play) do
+    play =
+      play
+      |> Play.changeset(Play.finish_changes(play, :timeout))
+      |> Repo.update!()
+
+    Player.handle_win(play.players, play.winner)
+
     {:stop, play}
   end
 
