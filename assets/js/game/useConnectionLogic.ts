@@ -13,6 +13,7 @@ export type TGame = {
     next_move_deadline: string
     round: number
     round_time: number
+    winner: string
 }
 
 export const useConnectionLogic = () => {

@@ -11,7 +11,7 @@ defmodule Revival.Games.Play do
     only: [:id, :mode, :status, :board, :players, :started_at,
       :round, :round_time,
       :next_move, :next_move_deadline,
-      :timer_pid]
+      :timer_pid, :winner]
   }
 
   schema "plays" do
