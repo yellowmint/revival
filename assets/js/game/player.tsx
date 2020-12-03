@@ -12,6 +12,12 @@ export type TPlayer = {
     name: string
     rank: number
     label: string
+    wallet: TWallet
+}
+
+export type TWallet = {
+    money: number
+    mana: number
 }
 
 export const Player = ({player, nextMove, winner}: PlayerProps) => {
@@ -25,12 +31,12 @@ export const Player = ({player, nextMove, winner}: PlayerProps) => {
                 <span className={styles.name}>{player.name}</span>
                 <span className={styles.rank}>({player.rank})</span>
             </div>
-            {nextMove && <>
+            {player.wallet && <>
                 <div className={styles.money}>
-                    Money: 0
+                    Money: {player.wallet.money}
                 </div>
                 <div className={styles.mana}>
-                    Mana: 0
+                    Mana: {player.wallet.mana}
                 </div>
                 <div className={styles.currentMove}>
                     {nextMove === player.label && <span className={styles.dot}/>}

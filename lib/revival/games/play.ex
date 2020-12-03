@@ -3,7 +3,7 @@ defmodule Revival.Games.Play do
   import Ecto.Changeset
 
   alias Revival.Utils
-  alias Revival.Games.{Play, Board}
+  alias Revival.Games.{Play, Board, Wallet}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @derive {
@@ -43,16 +43,17 @@ defmodule Revival.Games.Play do
   def warm_up_changes(play, timer_pid) do
     %{}
     |> Map.put(:status, "warming_up")
-    |> Map.put(:players, shuffle_and_label_players(play.players))
+    |> Map.put(:players, prepare_players(play.players, play.mode))
     |> Map.put(:board, Board.create_revival_spots(play.board))
     |> Map.put(:round, 0)
     |> Map.put(:started_at, next_round_deadline(play))
     |> Map.put(:timer_pid, inspect(timer_pid))
   end
 
-  defp shuffle_and_label_players(players) do
+  defp prepare_players(players, mode) do
     [player1, player2] = Enum.shuffle(players)
     [Map.put(player1, :label, "blue"), Map.put(player2, :label, "red")]
+    |> Enum.map(fn player -> Map.put(player, :wallet, Wallet.new_wallet(mode)) end)
   end
 
   defp next_round_deadline(%{mode: mode}) do
