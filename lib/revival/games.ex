@@ -69,7 +69,7 @@ defmodule Revival.Games do
   def get_player(user_id, anonymous_id, name), do: Player.get_player(user_id, anonymous_id, name)
 
   @doc """
-  Retrieves registered player for given `id` or rises execption.
+  Retrieves registered player for given `id` or rises exception.
   """
   def get_player!(id), do: Repo.get!(Player, id)
 
@@ -128,16 +128,12 @@ defmodule Revival.Games do
   def warm_up!(play, update_callback) do
     if !can_warm_up?(play), do: raise "Warm up not possible"
 
-    {:ok, pid} = Timer.start_link(
-      %Timer{
-        play_id: play.id,
-        callback: update_callback,
-        timeout: Play.round_time(play.mode) * 1000 + 100
-      }
+    {:ok, pid} = Timer.start(
+      %Timer{play_id: play.id, callback: update_callback, timeout: Play.round_time(play.mode) * 1000 + 100}
     )
 
     play
-    |> Play.changeset(Play.warm_up_play(play, pid))
+    |> Play.changeset(Play.warm_up_changes(play, pid))
     |> Repo.update!()
   end
 
@@ -149,13 +145,20 @@ defmodule Revival.Games do
   defp handle_timeout(%{status: "warming_up"} = play) do
     play =
       play
-      |> Play.changeset(Play.start_play(play))
+      |> Play.changeset(Play.start_changes(play))
       |> Repo.update!()
 
     {:next, play}
   end
 
   defp handle_timeout(%{status: "playing"} = play) do
+    play =
+      play
+      |> Play.changeset(Play.finish_changes(play, :timeout))
+      |> Repo.update!()
+
+    Player.handle_win(play.players, play.winner)
+
     {:stop, play}
   end
 
@@ -164,7 +167,6 @@ defmodule Revival.Games do
   """
   def client_encode(play) do
     play
-    |> Map.put(:timer_pid, nil)
     |> Map.put(:round_time, Play.round_time(play.mode))
     |> Map.put(:players, Enum.map(play.players, &Player.client_encode/1))
   end

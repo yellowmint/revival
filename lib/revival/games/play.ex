@@ -8,10 +8,9 @@ defmodule Revival.Games.Play do
   @primary_key {:id, :binary_id, autogenerate: true}
   @derive {
     Jason.Encoder,
-    only: [:id, :mode, :board, :players, :started_at,
+    only: [:id, :mode, :status, :board, :players, :started_at,
       :round, :round_time,
-      :next_move, :next_move_deadline,
-      :timer_pid]
+      :next_move, :next_move_deadline, :winner]
   }
 
   schema "plays" do
@@ -26,6 +25,7 @@ defmodule Revival.Games.Play do
     field :players, {:array, :map}
     field :started_at, :utc_datetime
     field :finished_at, :utc_datetime
+    field :winner, :string
     field :lock_version, :integer, default: 1
 
     timestamps()
@@ -40,36 +40,57 @@ defmodule Revival.Games.Play do
     play.status == "joining" && Enum.count(play.players) == 2
   end
 
-  def warm_up_play(play, timer_pid) do
-    play = Map.put(play, :players, Enum.shuffle(play.players))
-
-    play
+  def warm_up_changes(play, timer_pid) do
+    %{}
     |> Map.put(:status, "warming_up")
-    |> Map.put(:started_at, next_round_deadline(play))
-    |> Map.put(:players, put_labels_to_players(play.players))
+    |> Map.put(:players, shuffle_and_label_players(play.players))
     |> Map.put(:board, Board.create_revival_spots(play.board))
     |> Map.put(:round, 0)
+    |> Map.put(:started_at, next_round_deadline(play))
     |> Map.put(:timer_pid, inspect(timer_pid))
-    |> Map.from_struct()
   end
 
-  defp put_labels_to_players([player1, player2]) do
-    [Map.put(player1, :label, :blue), Map.put(player2, :label, :red)]
+  defp shuffle_and_label_players(players) do
+    [player1, player2] = Enum.shuffle(players)
+    [Map.put(player1, :label, "blue"), Map.put(player2, :label, "red")]
   end
 
-  def start_play(play) do
-    play
+  defp next_round_deadline(%{mode: mode}) do
+    NaiveDateTime.utc_now()
+    |> NaiveDateTime.add(round_time(mode))
+  end
+
+  def round_time("classic"), do: 10
+
+  def start_changes(play) do
+    %{}
     |> Map.put(:status, "playing")
     |> Map.put(:round, 1)
     |> Map.put(:next_move, Enum.random(["blue", "red"]))
     |> Map.put(:next_move_deadline, next_round_deadline(play))
-    |> Map.from_struct()
   end
+
+  def finish_changes(play, :timeout) do
+    %{}
+    |> Map.put(:status, "finished")
+    |> Map.put(:finished_at, NaiveDateTime.utc_now())
+    |> Map.put(:winner, determine_winner(play, :timeout))
+  end
+
+  defp determine_winner(play, :timeout) do
+    cond do
+      play.round <= 5 -> "draw"
+      true -> opponent_for(play.next_move)
+    end
+  end
+
+  defp opponent_for("blue"), do: "red"
+  defp opponent_for("red"), do: "blue"
 
   def changeset(play, attrs \\ %{}) do
     play
     |> cast(attrs, [:mode, :status, :round, :next_move, :next_move_deadline, :timer_pid, :board, :players,
-                    :started_at, :finished_at])
+                    :started_at, :finished_at, :winner])
     |> validate_required([:mode, :status, :board])
     |> validate_inclusion(:mode, ["classic"])
     |> validate_inclusion(:status, ["joining", "warming_up", "playing", "finished"])
@@ -95,13 +116,6 @@ defmodule Revival.Games.Play do
     changeset
     |> validate_inclusion(:status, ["playing", "finished"])
     |> validate_required([:round, :next_move, :next_move_deadline ])
-  end
-
-  def round_time("classic"), do: 10
-
-  def next_round_deadline(%{mode: mode}) do
-    NaiveDateTime.utc_now()
-    |> NaiveDateTime.add(round_time(mode))
   end
 
   def unify_keys(play) do

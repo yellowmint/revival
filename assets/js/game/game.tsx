@@ -4,27 +4,27 @@ import {TGame, useConnectionLogic} from "./useConnectionLogic"
 import {Join} from "./join"
 import {Player} from "./player"
 import {Timer} from "./timer"
-import {Round} from "./round"
+import {Status} from "./status"
 
 export const Game = () => {
     const {game, playerId, channel} = useConnectionLogic()
-
     if (!game || !playerId || !channel) return <div>Loading</div>
 
     const {playerIdx, reversed} = determinePlayer(game, playerId)
 
     return (
         <article>
-            <Join channel={channel}
-                  players={game.players}
-                  playerIdx={playerIdx}/>
-
-            <Round round={game.round}/>
-            <Timer startedAt={game.started_at} nextMoveDeadline={game.next_move_deadline} roundTime={game.round_time}/>
-
-            <Player player={game.players[0]} nextMove={game.next_move}/>
+            <Status status={game.status} round={game.round}/>
+            {game.status === "joining" && (
+                <Join channel={channel} playerIdx={playerIdx}/>
+            )}
+            {["warming_up", "playing"].includes(game.status) && (
+                <Timer nextDeadline={game.next_move_deadline || game.started_at}
+                       roundTime={game.round_time}/>
+            )}
+            <Player player={game.players[0]} nextMove={game.next_move} winner={game.winner}/>
             <Board board={game.board} reversed={reversed}/>
-            <Player player={game.players[1]} nextMove={game.next_move}/>
+            <Player player={game.players[1]} nextMove={game.next_move} winner={game.winner}/>
         </article>
     )
 }

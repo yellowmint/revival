@@ -1,6 +1,7 @@
 defmodule Revival.Games.Player do
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query, warn: false
 
   alias Revival.{Repo, Accounts}
   alias Revival.Games.Player
@@ -45,5 +46,23 @@ defmodule Revival.Games.Player do
     %Player{user_id: user_id, name: user.name, rank: 0}
     |> Player.changeset()
     |> Repo.insert!()
+  end
+
+  def handle_win(_players, "draw"), do: nil
+  def handle_win(players, winner) do
+    Enum.each(players, fn player ->
+      if winner == player.label, do: increase_rank(player.user_id),
+                                 else: decrease_rank(player.user_id)
+    end)
+  end
+
+  defp increase_rank(nil), do: nil
+  defp increase_rank(user_id) do
+    Repo.update(from p in Player, where: p.user_id == ^user_id, update: [inc: [rank: 1]])
+  end
+
+  defp decrease_rank(nil), do: nil
+  defp decrease_rank(user_id) do
+    Repo.update(from p in Player, where: p.user_id == ^user_id and p.rank > 1, update: [inc: [rank: -1]])
   end
 end

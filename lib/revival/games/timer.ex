@@ -5,8 +5,8 @@ defmodule Revival.Games.Timer do
 
   defstruct [:play_id, :callback, :timeout]
 
-  def start_link(%Timer{} = state) do
-    GenServer.start_link(__MODULE__, state)
+  def start(%Timer{} = state) do
+    GenServer.start(__MODULE__, state)
   end
 
   @impl true
@@ -26,7 +26,9 @@ defmodule Revival.Games.Timer do
         state.callback.(play)
         {:noreply, state, state.timeout}
 
-      {:stop, _play} -> {:stop, :play_stopped, state}
+      {:stop, play} ->
+        state.callback.(play)
+        {:stop, :play_stopped, state}
     end
   end
 end
