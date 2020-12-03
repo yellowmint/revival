@@ -58,7 +58,7 @@ defmodule Revival.GamesTest do
       assert Enum.count(game.players) == 1
     end
 
-    test "join_play/2 refute to join the same player twice" do
+    test "join_play/2 refutes to join the same player twice" do
       play = GamesFactory.insert(:play)
       player = GamesFactory.build(:anonymous_player)
 
@@ -69,7 +69,7 @@ defmodule Revival.GamesTest do
       assert changeset.errors == [players: {"list contains duplication", []}]
     end
 
-    test "warm_up!/2 raise when warming up is not possible" do
+    test "warm_up!/2 raises when warming up is not possible" do
       play = GamesFactory.insert(:play)
 
       assert_raise RuntimeError, "Warm up not possible", fn ->
@@ -77,7 +77,7 @@ defmodule Revival.GamesTest do
       end
     end
 
-    test "warm_up!/2 start warming up phase" do
+    test "warm_up!/2 starts warming up phase" do
       play = GamesFactory.insert(:play_with_players)
       play = Games.warm_up!(play, fn _ -> nil end)
 
@@ -89,6 +89,28 @@ defmodule Revival.GamesTest do
       assert Enum.count(play.board.revival_spots) == 2
       Enum.each(play.players, fn player -> assert player.label end)
       Enum.each(play.players, fn player -> assert player.wallet == %Wallet{money: 50, mana: 10} end)
+    end
+
+    test "timeout/1 in warming_up status starts playing phase" do
+      play = GamesFactory.insert(:play_with_players)
+      play = Games.warm_up!(play, fn _ -> nil end)
+
+      {:next, play} = Games.timeout(play.id)
+
+      assert play.status == "playing"
+      assert play.round == 1
+      assert play.next_move
+      assert play.next_move_deadline
+    end
+
+    test "timeout/1 in playing status finishes play" do
+      play = GamesFactory.build(:started_play)
+      {:stop, play} = Games.timeout(play.id)
+
+      assert play.status == "finished"
+      assert play.round == 1
+      assert play.winner == "draw"
+      assert play.finished_at
     end
   end
 end

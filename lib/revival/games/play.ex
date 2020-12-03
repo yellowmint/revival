@@ -111,14 +111,14 @@ defmodule Revival.Games.Play do
   def validate_status(changeset, "warming_up") do
     changeset
     |> validate_inclusion(:status, ["warming_up", "playing"])
-    |> validate_required([:players, :started_at, :timer_pid])
+    |> validate_required([:players, :started_at, :shop, :timer_pid])
     |> validate_length(:players, is: 2)
   end
 
   def validate_status(changeset, "playing") do
     changeset
     |> validate_inclusion(:status, ["playing", "finished"])
-    |> validate_required([:round, :next_move, :next_move_deadline ])
+    |> validate_required([:round, :next_move, :next_move_deadline])
   end
 
   def unify_keys(play) do
