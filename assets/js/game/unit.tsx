@@ -32,15 +32,3 @@ export const Unit = ({kind, level}: TUnit) => (
         <img src={kinds[kind][level-1]} alt={kind}/>
     </section>
 )
-
-
-interface TShopUnitProps  {
-    count: number
-}
-
-export const ShopUnit = ({kind, level}: TShopUnitProps & TUnit) => (
-    <section>
-        <Unit kind={kind} level={level}/>
-    </section>
-)
-

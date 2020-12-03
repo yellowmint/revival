@@ -26,7 +26,7 @@ export const Game = () => {
 
             <Player player={game.players[0]} nextMove={game.next_move} winner={game.winner}/>
             <Board board={game.board} reversed={reversed}/>
-            {["playing", "finished"].includes(game.status) && (
+            {["warming_up", "playing", "finished"].includes(game.status) && (
                 <Shop shop={game.shop}/>
             )}
             <Player player={game.players[1]} nextMove={game.next_move} winner={game.winner}/>

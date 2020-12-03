@@ -88,8 +88,8 @@ defmodule Revival.GamesTest do
       assert play.timer_pid
       assert play.shop == %Shop{
                goods: [
-                 %Good{kind: "golem", level: 1, count: 5},
-                 %Good{kind: "minotaur", level: 1, count: 5}
+                 %Good{kind: "golem", level: 1, count: 5, price: 20},
+                 %Good{kind: "minotaur", level: 1, count: 5, price: 35}
                ]
              }
       assert Enum.count(play.board.revival_spots) == 2

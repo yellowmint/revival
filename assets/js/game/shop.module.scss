@@ -5,5 +5,32 @@
   .wrapper {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
+
+    .shopUnit {
+      padding: 5px;
+      border-radius: 5px;
+      border: 2px solid white;
+      cursor: pointer;
+
+      &.selected {
+        border: 2px solid #7846b0;
+      }
+
+      .badge {
+        border-radius: 2px;
+        padding: 0 5px 5px 5px;
+        margin: 0 3px;
+      }
+
+      .countBadge {
+        @extend .badge;
+        background-color: #c7dbb3;
+      }
+
+      .moneyBadge {
+        @extend .badge;
+        background-color: #d7cfb6;
+      }
+    }
   }
 }
