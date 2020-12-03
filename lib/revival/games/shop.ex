@@ -4,7 +4,7 @@ defmodule Revival.Games.Shop do
   @derive Jason.Encoder
   defstruct [:minotaur_count, :witch_count]
 
-  def new_show(:classic) do
+  def new_shop("classic") do
     %Shop{
       minotaur_count: 10,
       witch_count: 5

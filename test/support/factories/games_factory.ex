@@ -5,11 +5,16 @@ defmodule Revival.GamesFactory do
     Revival.Games.Play.new_play(:classic)
   end
 
+  def play_with_players_factory() do
+    build(:play)
+    |> Map.put(:players, [build(:anonymous_player), build(:anonymous_player)])
+  end
+
   def anonymous_player_factory() do
     %Revival.Games.Player{
       id: Ecto.UUID.generate(),
       user_id: nil,
-      name: "Alice",
+      name: sequence(:player_name, ["Alice", "Tom"]),
       rank: 0
     }
   end

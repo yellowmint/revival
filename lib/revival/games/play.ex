@@ -3,12 +3,12 @@ defmodule Revival.Games.Play do
   import Ecto.Changeset
 
   alias Revival.Utils
-  alias Revival.Games.{Play, Board, Wallet}
+  alias Revival.Games.{Play, Board, Shop, Wallet}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @derive {
     Jason.Encoder,
-    only: [:id, :mode, :status, :board, :players, :started_at,
+    only: [:id, :mode, :status, :board, :shop, :players, :started_at,
       :round, :round_time,
       :next_move, :next_move_deadline, :winner]
   }
@@ -22,6 +22,7 @@ defmodule Revival.Games.Play do
     field :next_move_deadline, :utc_datetime
     field :timer_pid, :string
     field :board, :map
+    field :shop, :map
     field :players, {:array, :map}
     field :started_at, :utc_datetime
     field :finished_at, :utc_datetime
@@ -45,6 +46,7 @@ defmodule Revival.Games.Play do
     |> Map.put(:status, "warming_up")
     |> Map.put(:players, prepare_players(play.players, play.mode))
     |> Map.put(:board, Board.create_revival_spots(play.board))
+    |> Map.put(:shop, Shop.new_shop(play.mode))
     |> Map.put(:round, 0)
     |> Map.put(:started_at, next_round_deadline(play))
     |> Map.put(:timer_pid, inspect(timer_pid))
@@ -90,7 +92,7 @@ defmodule Revival.Games.Play do
 
   def changeset(play, attrs \\ %{}) do
     play
-    |> cast(attrs, [:mode, :status, :round, :next_move, :next_move_deadline, :timer_pid, :board, :players,
+    |> cast(attrs, [:mode, :status, :round, :next_move, :next_move_deadline, :timer_pid, :board, :shop, :players,
                     :started_at, :finished_at, :winner])
     |> validate_required([:mode, :status, :board])
     |> validate_inclusion(:mode, ["classic"])
