@@ -3,12 +3,12 @@ defmodule Revival.Games.Play do
   import Ecto.Changeset
 
   alias Revival.Utils
-  alias Revival.Games.{Play, Board}
+  alias Revival.Games.{Play, Board, Shop, Wallet}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @derive {
     Jason.Encoder,
-    only: [:id, :mode, :status, :board, :players, :started_at,
+    only: [:id, :mode, :status, :board, :shop, :players, :started_at,
       :round, :round_time,
       :next_move, :next_move_deadline, :winner]
   }
@@ -22,6 +22,7 @@ defmodule Revival.Games.Play do
     field :next_move_deadline, :utc_datetime
     field :timer_pid, :string
     field :board, :map
+    field :shop, :map
     field :players, {:array, :map}
     field :started_at, :utc_datetime
     field :finished_at, :utc_datetime
@@ -43,16 +44,18 @@ defmodule Revival.Games.Play do
   def warm_up_changes(play, timer_pid) do
     %{}
     |> Map.put(:status, "warming_up")
-    |> Map.put(:players, shuffle_and_label_players(play.players))
+    |> Map.put(:players, prepare_players(play.players, play.mode))
     |> Map.put(:board, Board.create_revival_spots(play.board))
+    |> Map.put(:shop, Shop.new_shop(play.mode))
     |> Map.put(:round, 0)
     |> Map.put(:started_at, next_round_deadline(play))
     |> Map.put(:timer_pid, inspect(timer_pid))
   end
 
-  defp shuffle_and_label_players(players) do
+  defp prepare_players(players, mode) do
     [player1, player2] = Enum.shuffle(players)
     [Map.put(player1, :label, "blue"), Map.put(player2, :label, "red")]
+    |> Enum.map(fn player -> Map.put(player, :wallet, Wallet.new_wallet(mode)) end)
   end
 
   defp next_round_deadline(%{mode: mode}) do
@@ -89,7 +92,7 @@ defmodule Revival.Games.Play do
 
   def changeset(play, attrs \\ %{}) do
     play
-    |> cast(attrs, [:mode, :status, :round, :next_move, :next_move_deadline, :timer_pid, :board, :players,
+    |> cast(attrs, [:mode, :status, :round, :next_move, :next_move_deadline, :timer_pid, :board, :shop, :players,
                     :started_at, :finished_at, :winner])
     |> validate_required([:mode, :status, :board])
     |> validate_inclusion(:mode, ["classic"])
@@ -108,14 +111,14 @@ defmodule Revival.Games.Play do
   def validate_status(changeset, "warming_up") do
     changeset
     |> validate_inclusion(:status, ["warming_up", "playing"])
-    |> validate_required([:players, :started_at, :timer_pid])
+    |> validate_required([:players, :started_at, :shop, :timer_pid])
     |> validate_length(:players, is: 2)
   end
 
   def validate_status(changeset, "playing") do
     changeset
     |> validate_inclusion(:status, ["playing", "finished"])
-    |> validate_required([:round, :next_move, :next_move_deadline ])
+    |> validate_required([:round, :next_move, :next_move_deadline])
   end
 
   def unify_keys(play) do

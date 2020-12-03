@@ -1,5 +1,5 @@
 defmodule Revival.Games.Board do
-  alias Revival.Games.{Board}
+  alias Revival.Games.Board
 
   @derive Jason.Encoder
   defstruct [:columns, :rows, :units, :revival_spots]

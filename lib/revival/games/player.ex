@@ -7,17 +7,18 @@ defmodule Revival.Games.Player do
   alias Revival.Games.Player
 
   @primary_key {:id, :binary_id, autogenerate: true}
-  @derive {Jason.Encoder, only: [:id, :name, :rank, :user_id, :label]}
+  @derive {Jason.Encoder, only: [:id, :name, :rank, :user_id, :label, :wallet]}
 
   def client_encode(player) do
-    Map.take(player, [:id, :name, :rank, :label])
+    Map.take(player, [:id, :name, :rank, :label, :wallet])
   end
 
   schema "players" do
     field :name, :string
     field :rank, :integer
     field :user_id, :binary_id
-    field(:label, :string, virtual: true)
+    field :label, :string, virtual: true
+    field :wallet, :map, virtual: true
 
     timestamps()
   end

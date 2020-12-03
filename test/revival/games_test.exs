@@ -5,7 +5,8 @@ defmodule Revival.GamesTest do
   alias Revival.Games
 
   describe "plays" do
-    alias Revival.Games.Board
+    alias Revival.Games.{Board, Shop, Wallet}
+    alias Revival.Games.Shop.Good
     alias Revival.{AccountsFactory, GamesFactory}
 
     test "create_play/1 creates fresh play" do
@@ -58,15 +59,64 @@ defmodule Revival.GamesTest do
       assert Enum.count(game.players) == 1
     end
 
-    test "join_play/2 refute to join the same player twice" do
+    test "join_play/2 refutes to join the same player twice" do
       play = GamesFactory.insert(:play)
       player = GamesFactory.build(:anonymous_player)
 
-      {:ok, game} = Games.join_play(play.id, player)
+      {:ok, play} = Games.join_play(play.id, player)
       {:error, changeset} = Games.join_play(play.id, player)
 
-      assert Enum.count(game.players) == 1
+      assert Enum.count(play.players) == 1
       assert changeset.errors == [players: {"list contains duplication", []}]
+    end
+
+    test "warm_up!/2 raises when warming up is not possible" do
+      play = GamesFactory.insert(:play)
+
+      assert_raise RuntimeError, "Warm up not possible", fn ->
+        Games.warm_up!(play, fn _ -> nil end)
+      end
+    end
+
+    test "warm_up!/2 starts warming up phase" do
+      play = GamesFactory.insert(:play_with_players)
+      play = Games.warm_up!(play, fn _ -> nil end)
+
+      assert play.status == "warming_up"
+      assert play.round == 0
+      assert play.started_at
+      assert play.timer_pid
+      assert play.shop == %Shop{
+               goods: [
+                 %Good{kind: "golem", level: 1, count: 5, price: 20},
+                 %Good{kind: "minotaur", level: 1, count: 5, price: 35}
+               ]
+             }
+      assert Enum.count(play.board.revival_spots) == 2
+      Enum.each(play.players, fn player -> assert player.label end)
+      Enum.each(play.players, fn player -> assert player.wallet == %Wallet{money: 50, mana: 10} end)
+    end
+
+    test "timeout/1 in warming_up status starts playing phase" do
+      play = GamesFactory.insert(:play_with_players)
+      play = Games.warm_up!(play, fn _ -> nil end)
+
+      {:next, play} = Games.timeout(play.id)
+
+      assert play.status == "playing"
+      assert play.round == 1
+      assert play.next_move
+      assert play.next_move_deadline
+    end
+
+    test "timeout/1 in playing status finishes play" do
+      play = GamesFactory.build(:started_play)
+      {:stop, play} = Games.timeout(play.id)
+
+      assert play.status == "finished"
+      assert play.round == 1
+      assert play.winner == "draw"
+      assert play.finished_at
     end
   end
 end

@@ -5,6 +5,7 @@ import {Join} from "./join"
 import {Player} from "./player"
 import {Timer} from "./timer"
 import {Status} from "./status"
+import {Shop} from "./shop"
 
 export const Game = () => {
     const {game, playerId, channel} = useConnectionLogic()
@@ -22,8 +23,12 @@ export const Game = () => {
                 <Timer nextDeadline={game.next_move_deadline || game.started_at}
                        roundTime={game.round_time}/>
             )}
+
             <Player player={game.players[0]} nextMove={game.next_move} winner={game.winner}/>
             <Board board={game.board} reversed={reversed}/>
+            {["warming_up", "playing", "finished"].includes(game.status) && (
+                <Shop shop={game.shop}/>
+            )}
             <Player player={game.players[1]} nextMove={game.next_move} winner={game.winner}/>
         </article>
     )

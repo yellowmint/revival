@@ -3,6 +3,7 @@ import {Channel, Socket} from "phoenix"
 import {TBoard} from "./board"
 import {useAuthToken} from "./useAuthToken"
 import {TPlayer} from "./player"
+import {TShop} from "./shop"
 
 export type TGame = {
     status: string
@@ -14,6 +15,7 @@ export type TGame = {
     round: number
     round_time: number
     winner: string
+    shop: TShop
 }
 
 export const useConnectionLogic = () => {
