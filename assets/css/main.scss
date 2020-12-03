@@ -60,4 +60,11 @@ button {
   &:hover {
     background-color: #c9e0ec;
   }
+
+  &:disabled {
+    color: #37383c;
+    background-color: #a9a9a9;
+    transition: none;
+    cursor: auto;
+  }
 }
