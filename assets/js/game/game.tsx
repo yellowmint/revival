@@ -8,20 +8,22 @@ import {Round} from "./round"
 
 export const Game = () => {
     const {game, playerId, channel} = useConnectionLogic()
-
     if (!game || !playerId || !channel) return <div>Loading</div>
 
     const {playerIdx, reversed} = determinePlayer(game, playerId)
 
     return (
         <article>
-            <Join channel={channel}
-                  players={game.players}
-                  playerIdx={playerIdx}/>
-
-            <Round round={game.round}/>
-            <Timer startedAt={game.started_at} nextMoveDeadline={game.next_move_deadline} roundTime={game.round_time}/>
-
+            {game.status === "joining" && (
+                <Join channel={channel} playerIdx={playerIdx}/>
+            )}
+            {game.status !== "joining" && (
+                <Round round={game.round}/>
+            )}
+            {["warming_up", "playing"].includes(game.status) && (
+                <Timer nextDeadline={game.next_move_deadline || game.started_at}
+                       roundTime={game.round_time}/>
+            )}
             <Player player={game.players[0]} nextMove={game.next_move}/>
             <Board board={game.board} reversed={reversed}/>
             <Player player={game.players[1]} nextMove={game.next_move}/>

@@ -34,7 +34,7 @@ export const useConnectionLogic = () => {
         const channelHandle = socket.channel("play:" + id)
         channelHandle.join()
             .receive("ok", ({play, player_id}: {play: TGame, player_id: string}) => {
-                console.log("play_update", play, player_id)
+                console.log("play load", play, player_id)
                 setGame(play)
                 setPlayerId(player_id)
             })
@@ -47,7 +47,7 @@ export const useConnectionLogic = () => {
     useEffect(() => {
         if (!channel) return
         const ref = channel.on("play_update", (play: TGame) => {
-            console.log("play_update", play)
+            console.log("play update", play)
             setGame(play)
         })
         return () => channel.off("play_update", ref)

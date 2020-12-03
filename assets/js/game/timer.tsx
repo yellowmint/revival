@@ -3,30 +3,28 @@ import styles from "./timer.module.scss"
 import {differenceInMilliseconds, parseISO} from "date-fns"
 
 interface TimerProps {
-    startedAt: string
-    nextMoveDeadline: string
+    nextDeadline: string
     roundTime: number
 }
 
-export const Timer = ({startedAt, nextMoveDeadline, roundTime}: TimerProps) => {
+export const Timer = ({nextDeadline, roundTime}: TimerProps) => {
     const [counter, setCounter] = useState<number>()
 
     useEffect(() => {
-        if (!startedAt) return
+        if (!nextDeadline) return
 
-        const update = () => {
-            const diff = differenceInMilliseconds(parseISO(startedAt), new Date())
-            if (diff <= 0) {
+        const tick = () => {
+            const diff = differenceInMilliseconds(parseISO(nextDeadline), new Date())
+
+            if (diff > 0) {
+                setCounter(diff)
+                setTimeout(tick, 1000)
+            } else {
                 setCounter(0)
-                return
             }
-
-            setCounter(diff)
-            setTimeout(update, 1000)
         }
-
-        update()
-    }, [startedAt, nextMoveDeadline])
+        tick()
+    }, [nextDeadline])
 
     if (counter === null || counter === undefined) return <></>
 

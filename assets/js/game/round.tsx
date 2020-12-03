@@ -4,12 +4,8 @@ interface RoundProps {
     round: number
 }
 
-export const Round = ({round}: RoundProps) => {
-    if (!round) return <></>
-
-    return (
-        <section>
-            Round {round}
-        </section>
-    )
-}
+export const Round = ({round}: RoundProps) => (
+    <section>
+        Round {round}
+    </section>
+)
