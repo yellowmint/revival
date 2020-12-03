@@ -6,6 +6,7 @@ defmodule Revival.GamesTest do
 
   describe "plays" do
     alias Revival.Games.{Board, Shop, Wallet}
+    alias Revival.Games.Shop.Good
     alias Revival.{AccountsFactory, GamesFactory}
 
     test "create_play/1 creates fresh play" do
@@ -85,7 +86,12 @@ defmodule Revival.GamesTest do
       assert play.round == 0
       assert play.started_at
       assert play.timer_pid
-      assert play.shop == %Shop{minotaur_count: 10, witch_count: 5}
+      assert play.shop == %Shop{
+               goods: [
+                 %Good{kind: "golem", level: 1, count: 5},
+                 %Good{kind: "minotaur", level: 1, count: 5}
+               ]
+             }
       assert Enum.count(play.board.revival_spots) == 2
       Enum.each(play.players, fn player -> assert player.label end)
       Enum.each(play.players, fn player -> assert player.wallet == %Wallet{money: 50, mana: 10} end)
