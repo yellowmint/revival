@@ -20,9 +20,11 @@ export const Game = () => {
             {game.status === "joining" && (
                 <Join channel={channel} joined={joined}/>
             )}
-            {["warming_up", "playing"].includes(game.status) && (
-                <Timer nextDeadline={game.next_move_deadline || game.started_at}
-                       roundTime={game.round_time}/>
+            {game.status === "warming_up" && (
+                <Timer nextDeadline={game.started_at} roundTime={3}/>
+            )}
+            {game.status === "playing" && (
+                <Timer nextDeadline={game.next_move_deadline} roundTime={game.round_time}/>
             )}
 
             <Player player={game.players[0]} nextMove={game.next_move} winner={game.winner}/>

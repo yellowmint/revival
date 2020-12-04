@@ -48,7 +48,7 @@ defmodule Revival.Games.Play do
     |> Map.put(:board, Board.create_revival_spots(play.board))
     |> Map.put(:shop, Shop.new_shop(play.mode))
     |> Map.put(:round, 0)
-    |> Map.put(:started_at, next_round_deadline(play))
+    |> Map.put(:started_at, NaiveDateTime.add(NaiveDateTime.utc_now(), 3))
     |> Map.put(:timer_pid, inspect(timer_pid))
   end
 
@@ -92,8 +92,23 @@ defmodule Revival.Games.Play do
 
   def changeset(play, attrs \\ %{}) do
     play
-    |> cast(attrs, [:mode, :status, :round, :next_move, :next_move_deadline, :timer_pid, :board, :shop, :players,
-                    :started_at, :finished_at, :winner])
+    |> cast(
+         attrs,
+         [
+           :mode,
+           :status,
+           :round,
+           :next_move,
+           :next_move_deadline,
+           :timer_pid,
+           :board,
+           :shop,
+           :players,
+           :started_at,
+           :finished_at,
+           :winner
+         ]
+       )
     |> validate_required([:mode, :status, :board])
     |> validate_inclusion(:mode, ["classic"])
     |> validate_inclusion(:status, ["joining", "warming_up", "playing", "finished"])

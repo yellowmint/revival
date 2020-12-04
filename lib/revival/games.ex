@@ -129,7 +129,7 @@ defmodule Revival.Games do
     if !can_warm_up?(play), do: raise "Warm up not possible"
 
     {:ok, pid} = Timer.start(
-      %Timer{play_id: play.id, callback: update_callback, timeout: Play.round_time(play.mode) * 1000 + 100}
+      %Timer{play_id: play.id, callback: update_callback, timeout: Play.round_time(play.mode) * 1000 + 200}
     )
 
     play

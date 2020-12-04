@@ -11,7 +11,7 @@ defmodule Revival.Games.Timer do
 
   @impl true
   def init(state) do
-    {:ok, state, state.timeout}
+    {:ok, state, 3200}
   end
 
   @impl true

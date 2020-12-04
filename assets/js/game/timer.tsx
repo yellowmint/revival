@@ -13,17 +13,18 @@ export const Timer = ({nextDeadline, roundTime}: TimerProps) => {
     useEffect(() => {
         if (!nextDeadline) return
 
+        let timeoutRef: number
+
         const tick = () => {
             const diff = differenceInMilliseconds(parseISO(nextDeadline), new Date())
+            if (diff <= 0) return setCounter(0)
 
-            if (diff > 0) {
-                setCounter(diff)
-                setTimeout(tick, 1000)
-            } else {
-                setCounter(0)
-            }
+            setCounter(diff)
+            timeoutRef = setTimeout(tick, 1000)
         }
         tick()
+
+        return () => clearTimeout(timeoutRef)
     }, [nextDeadline])
 
     if (counter === null || counter === undefined) return <></>
