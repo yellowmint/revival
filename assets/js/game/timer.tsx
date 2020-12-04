@@ -1,6 +1,7 @@
 import React, {CSSProperties, useEffect, useState} from "react"
 import styles from "./timer.module.scss"
 import {differenceInMilliseconds, parseISO} from "date-fns"
+import {usePrevious} from "../utils/usePrevious"
 
 interface TimerProps {
     nextDeadline: string
@@ -9,9 +10,20 @@ interface TimerProps {
 
 export const Timer = ({nextDeadline, roundTime}: TimerProps) => {
     const [counter, setCounter] = useState<number>()
+    const prevDeadline = usePrevious(nextDeadline)
+
+    const rotateHourglass = () => {
+        const hourglass = document.getElementById("hourglass")
+        if (hourglass) {
+            hourglass.classList.remove(styles.hourglassShrink)
+            void hourglass.offsetWidth
+            hourglass.classList.add(styles.hourglassShrink)
+        }
+    }
 
     useEffect(() => {
         if (!nextDeadline) return
+        if (nextDeadline != prevDeadline) rotateHourglass()
 
         let timeoutRef: number
 
@@ -27,14 +39,15 @@ export const Timer = ({nextDeadline, roundTime}: TimerProps) => {
         return () => clearTimeout(timeoutRef)
     }, [nextDeadline])
 
-    if (counter === null || counter === undefined) return <></>
+    if (counter === undefined) return <></>
 
     return (
         <section className={styles.timer}>
             {Math.ceil(counter / 1000)}
-            {counter > 0
-                ? <span className={styles.hourglass} style={{"--roundTime": `${roundTime}s`} as CSSProperties}/>
-                : <span className={styles.hourglassPlaceholder}/>}
+            <span id="hourglass"
+                  className={`${styles.hourglass} ${styles.hourglassShrink}`}
+                  style={{"--roundTime": `${roundTime}s`} as CSSProperties}
+            />
         </section>
     )
 }
