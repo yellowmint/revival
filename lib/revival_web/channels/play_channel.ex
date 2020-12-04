@@ -25,6 +25,13 @@ defmodule RevivalWeb.PlayChannel do
     end
   end
 
+  def handle_in("end_round", %{"moves" => moves}, socket) do
+    %{play_id: play_id, player_id: player_id} = socket.assigns
+
+    Games.end_round(play_id, player_id, moves)
+    {:noreply, socket}
+  end
+
   defp auto_warm_up(play, socket) do
     if Games.can_warm_up?(play) do
       Games.warm_up!(play, fn (play) -> play_update(play, socket) end)

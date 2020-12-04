@@ -3,7 +3,7 @@ defmodule Revival.Games.Play do
   import Ecto.Changeset
 
   alias Revival.Utils
-  alias Revival.Games.{Play, Board, Shop, Wallet}
+  alias Revival.Games.{Play, Player, Board, Shop, Wallet, Move}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @derive {
@@ -58,19 +58,12 @@ defmodule Revival.Games.Play do
     |> Enum.map(fn player -> Map.put(player, :wallet, Wallet.new_wallet(mode)) end)
   end
 
-  defp next_round_deadline(%{mode: mode}) do
-    NaiveDateTime.utc_now()
-    |> NaiveDateTime.add(round_time(mode))
-  end
-
-  def round_time("classic"), do: 10
-
   def start_changes(play) do
     %{}
     |> Map.put(:status, "playing")
     |> Map.put(:round, 1)
     |> Map.put(:next_move, Enum.random(["blue", "red"]))
-    |> Map.put(:next_move_deadline, next_round_deadline(play))
+    |> Map.put(:next_move_deadline, Move.next_round_deadline(play.mode))
   end
 
   def finish_changes(play, :timeout) do
@@ -83,12 +76,9 @@ defmodule Revival.Games.Play do
   defp determine_winner(play, :timeout) do
     cond do
       play.round <= 5 -> "draw"
-      true -> opponent_for(play.next_move)
+      true -> Player.opponent_for(play.next_move)
     end
   end
-
-  defp opponent_for("blue"), do: "red"
-  defp opponent_for("red"), do: "blue"
 
   def changeset(play, attrs \\ %{}) do
     play
