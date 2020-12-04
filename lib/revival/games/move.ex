@@ -18,7 +18,7 @@ defmodule Revival.Games.Move do
     |> Map.put(:next_move_deadline, next_round_deadline(play.mode))
   end
 
-  def round_time("classic"), do: 10
+  def round_time("classic"), do: 3600
 
   def next_round_deadline(mode) do
     NaiveDateTime.utc_now()

@@ -28,7 +28,7 @@ export const Game = () => {
             )}
 
             <Player player={game.players[0]} nextMove={game.next_move} winner={game.winner}/>
-            <Board board={game.board} reversed={reversed}/>
+            <Board board={game.board} reversed={reversed} myMove={myMove}/>
             {["warming_up", "playing", "finished"].includes(game.status) && (
                 <Shop shop={game.shop}/>
             )}
@@ -53,7 +53,7 @@ function determinePlayer(game: TGame, playerId: string) {
         reversed = true
     }
 
-    const myMove = game.players[1]?.label === game.next_move
+    const myMove = !!game.next_move && game.next_move === game.players[1]?.label
 
     return {joined, myMove, reversed}
 }

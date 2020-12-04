@@ -6,6 +6,7 @@ import {Field} from "./field"
 interface BoardProps {
     board: TBoard
     reversed: boolean
+    myMove: boolean
 }
 
 export type TBoard = {
@@ -23,12 +24,21 @@ type TRevivalSpot = {
     label: string
 }
 
-export const Board = ({board, reversed}: BoardProps) => {
+export const Board = ({board, reversed, myMove}: BoardProps) => {
     useEffect(() => {
         board.revival_spots.forEach(({column, row}) => {
             getField(board, reversed, column, row)?.classList.add(fieldStyles.revivalSpot)
         })
-    }, [board, reversed])
+
+        const columnsTimes = [...Array(board.columns)]
+        columnsTimes.forEach((_, idx) => {
+            const field = getField(board, true, idx + 1, 1)
+            myMove
+                ? field?.classList.add(fieldStyles.availableToPlace)
+                : field?.classList.remove(fieldStyles.availableToPlace)
+        })
+
+    }, [board, reversed, myMove])
 
     return (
         <article className={styles.board}>
