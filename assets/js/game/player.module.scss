@@ -40,11 +40,20 @@
   .currentMove {
     .dot {
       display: block;
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       margin-top: 4px;
       border-radius: 50px;
       background-color: #a74644;
+      border: 2px solid #a74644;
+    }
+
+    .dotFiled {
+      background-color: #a74644;
+    }
+
+    .dotEmpty {
+      background-color: transparent;
     }
   }
 }

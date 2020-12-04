@@ -39,7 +39,7 @@ export const Player = ({player, nextMove, winner}: PlayerProps) => {
                     Mana: {player.wallet.mana}
                 </div>
                 <div className={styles.currentMove}>
-                    {nextMove === player.label && <span className={styles.dot}/>}
+                    <span className={`${styles.dot} ${nextMove === player.label ? styles.dotFiled : styles.dotEmpty}`}/>
                 </div>
             </>}
         </section>
