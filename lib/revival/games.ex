@@ -190,9 +190,9 @@ defmodule Revival.Games do
   defp notify_client(play) do
     timer_pid =
       play.timer_pid
-      |> String.replace_prefix("#PID<", "")
-      |> String.replace_suffix(">", "")
-      |> IEx.Helpers.pid()
+      |> String.replace_prefix("#PID", "")
+      |> String.to_charlist()
+      |> :erlang.list_to_pid()
 
     GenServer.cast(timer_pid, {:update, play})
     play
