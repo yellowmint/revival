@@ -30,7 +30,7 @@ export const Game = () => {
             {["warming_up", "playing", "finished"].includes(game.status) && (
                 <Shop shop={game.shop}/>
             )}
-            {game.status === "playing" && (
+            {["warming_up", "playing"].includes(game.status) && (
                 <Move channel={channel} moves={[]} active={myMove}/>
             )}
             <Player player={game.players[1]} nextMove={game.next_move} winner={game.winner}/>
