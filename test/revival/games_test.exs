@@ -5,7 +5,7 @@ defmodule Revival.GamesTest do
   alias Revival.Games
 
   describe "plays" do
-    alias Revival.Games.{Board, Shop, Wallet}
+    alias Revival.Games.{Board, Shop, Wallet, Move}
     alias Revival.Games.Shop.Good
     alias Revival.{AccountsFactory, GamesFactory}
 
@@ -117,6 +117,38 @@ defmodule Revival.GamesTest do
       assert play.round == 1
       assert play.winner == "draw"
       assert play.finished_at
+    end
+
+    test "end_round/3 creates next round" do
+      play = GamesFactory.build(:started_play)
+      {current_player, _} = Move.get_player_of_current_round(play)
+      play = Games.end_round(play.id, current_player.id, [])
+
+      assert play.round == 2
+      assert play.next_move != current_player.label
+    end
+
+    test "end_round/3 raises when wrong player tires to make move" do
+      play = GamesFactory.build(:started_play)
+      {current_player, _} = Move.get_player_of_current_round(play)
+      opponent = Enum.find(play.players, fn x -> x.id != current_player.id end)
+
+      assert_raise RuntimeError, "wrong player move", fn ->
+        Games.end_round(play.id, opponent.id, [])
+      end
+    end
+
+    test "end_round/3 handles moves" do
+      play = GamesFactory.build(:started_play)
+      {player1, player1_idx} = Move.get_player_of_current_round(play)
+      moves = [
+        %{"type" => "place_unit", "position" => %{"column" => 8, "row" => 1}, "unit" => %{"kind" => "satyr", "level" => 1}}
+      ]
+
+      play = Games.end_round(play.id, player1.id, moves)
+      player1 = Enum.fetch!(play.players, player1_idx)
+
+      assert player1.wallet.money == 35
     end
   end
 end

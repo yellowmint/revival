@@ -175,14 +175,14 @@ defmodule Revival.Games do
   @doc """
   Handle players moves made during current round.
   """
-  def end_round(play_id, player_id, _moves) do
+  def end_round(play_id, player_id, moves) do
     play =
       play_id
       |> get_play!()
       |> Move.ensure_correct_player_move!(player_id)
 
     play
-    |> Play.changeset(Move.next_move_changes(play))
+    |> Play.changeset(Move.next_move_changes(play, moves))
     |> Repo.update!()
     |> notify_client
   end
