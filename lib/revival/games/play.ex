@@ -128,7 +128,8 @@ defmodule Revival.Games.Play do
 
   def unify_keys(play) do
     play
-    |> Map.put(:board, Utils.convert_map_keys_to_atoms(play.board))
-    |> Map.put(:players, Enum.map(play.players, &Utils.convert_map_keys_to_atoms/1))
+    |> Map.put(:board, Utils.keys_to_atoms(play.board))
+    |> Map.put(:players, Utils.keys_to_atoms(play.players))
+    |> Map.put(:shop, Utils.keys_to_atoms(play.shop))
   end
 end
