@@ -22,7 +22,7 @@ export type TWallet = {
     mana: number
 }
 
-export const Player = ({player, nextMove, winner}: PlayerProps) => {
+export const Player = ({player, nextMove, winner, me}: PlayerProps) => {
     const [ctx, dispatch] = useContext(MoveContext)
 
     useEffect(() => {
@@ -32,6 +32,7 @@ export const Player = ({player, nextMove, winner}: PlayerProps) => {
 
     if (!player) return <></>
 
+    const wallet = me ? ctx.wallet : player.wallet
     const isWinner = winner && player.label === winner
 
     return (
@@ -40,12 +41,12 @@ export const Player = ({player, nextMove, winner}: PlayerProps) => {
                 <span className={styles.name}>{player.name}</span>
                 <span className={styles.rank}>({player.rank})</span>
             </div>
-            {ctx.wallet && <>
+            {wallet && <>
                 <div className={styles.money}>
-                    Money: {ctx.wallet.money}
+                    Money: {wallet.money}
                 </div>
                 <div className={styles.mana}>
-                    Mana: {ctx.wallet.mana}
+                    Mana: {wallet.mana}
                 </div>
                 <div className={styles.currentMove}>
                     <span className={`${styles.dot} ${nextMove === player.label ? styles.dotFiled : styles.dotEmpty}`}/>
