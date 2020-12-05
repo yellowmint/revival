@@ -27,7 +27,7 @@ export const Shop = ({shop}: ShopProps) => {
 
     return (<section className={styles.shop}>
             <div className={styles.wrapper}>
-                {shop.goods.map(good => (
+                {ctx.shop.goods.map(good => (
                     <div key={`${good.kind}-${good.level}`}
                          onClick={() => dispatch({type: "selectGood", payload: good})}
                     >
