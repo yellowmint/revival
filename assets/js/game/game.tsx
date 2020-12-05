@@ -7,6 +7,7 @@ import {Timer} from "./timer"
 import {Status} from "./status"
 import {Shop} from "./shop"
 import {Move} from "./move"
+import {MoveContextProvider} from "./moveContext"
 
 export const Game = () => {
     const {game, playerId, channel} = useConnectionLogic()
@@ -28,14 +29,16 @@ export const Game = () => {
             )}
 
             <Player player={game.players[0]} nextMove={game.next_move} winner={game.winner}/>
-            <Board board={game.board} reversed={reversed} myMove={myMove}/>
-            {["warming_up", "playing", "finished"].includes(game.status) && (
-                <Shop shop={game.shop}/>
-            )}
-            {["warming_up", "playing"].includes(game.status) && (
-                <Move channel={channel} moves={[]} active={myMove}/>
-            )}
-            <Player player={game.players[1]} nextMove={game.next_move} winner={game.winner}/>
+            <MoveContextProvider>
+                <Board board={game.board} reversed={reversed} myMove={myMove}/>
+                {["warming_up", "playing", "finished"].includes(game.status) && (
+                    <Shop shop={game.shop}/>
+                )}
+                {["warming_up", "playing"].includes(game.status) && (
+                    <Move channel={channel} moves={[]} active={myMove}/>
+                )}
+                <Player player={game.players[1]} nextMove={game.next_move} winner={game.winner}/>
+            </MoveContextProvider>
         </article>
     )
 }
