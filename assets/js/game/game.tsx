@@ -28,16 +28,16 @@ export const Game = () => {
                 <Timer nextDeadline={game.next_move_deadline} roundTime={game.round_time}/>
             )}
 
-            <Player player={game.players[0]} nextMove={game.next_move} winner={game.winner}/>
+            <Player me={false} player={game.players[0]} nextMove={game.next_move} winner={game.winner}/>
             <MoveContextProvider>
                 <Board board={game.board} reversed={reversed} myMove={myMove}/>
                 {["warming_up", "playing", "finished"].includes(game.status) && (
                     <Shop shop={game.shop}/>
                 )}
                 {["warming_up", "playing"].includes(game.status) && (
-                    <Move channel={channel} moves={[]} active={myMove}/>
+                    <Move channel={channel} active={myMove}/>
                 )}
-                <Player player={game.players[1]} nextMove={game.next_move} winner={game.winner}/>
+                <Player me={true} player={game.players[1]} nextMove={game.next_move} winner={game.winner}/>
             </MoveContextProvider>
         </article>
     )

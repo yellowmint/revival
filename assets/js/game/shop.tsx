@@ -1,4 +1,4 @@
-import React, {useContext} from "react"
+import React, {useContext, useEffect} from "react"
 import styles from "./shop.module.scss"
 import {TKind, Unit} from "./unit"
 import {MoveContext} from "./moveContext"
@@ -20,6 +20,10 @@ export type TGood = {
 
 export const Shop = ({shop}: ShopProps) => {
     const [ctx, dispatch] = useContext(MoveContext)
+
+    useEffect(() => {
+        dispatch({type: "updateShop", payload: shop})
+    }, [shop])
 
     return (<section className={styles.shop}>
             <div className={styles.wrapper}>

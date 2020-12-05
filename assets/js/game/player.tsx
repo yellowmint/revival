@@ -1,10 +1,12 @@
-import React from "react"
+import React, {useContext, useEffect} from "react"
 import styles from "./player.module.scss"
+import {MoveContext} from "./moveContext"
 
 interface PlayerProps {
     player: TPlayer
     nextMove: string
     winner: string
+    me: boolean
 }
 
 export type TPlayer = {
@@ -21,6 +23,13 @@ export type TWallet = {
 }
 
 export const Player = ({player, nextMove, winner}: PlayerProps) => {
+    const [, dispatch] = useContext(MoveContext)
+
+    useEffect(() => {
+        if (!player) return
+        dispatch({type: "updateWallet", payload: player.wallet})
+    }, [player])
+
     if (!player) return <></>
 
     const isWinner = winner && player.label === winner

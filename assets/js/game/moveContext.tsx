@@ -9,10 +9,9 @@ type TMoveContext = {
     moves: Array<object>
 }
 
-type TAction = {
-    type: "selectGood" | "placeUnit"
-    payload: TGood
-}
+type TAction = { type: "updateShop", payload: TShop }
+    | { type: "selectGood", payload: TGood }
+    | { type: "updateWallet", payload: TWallet }
 
 const initial = {
     shop: {
@@ -30,11 +29,14 @@ type TReducer = [TMoveContext, Dispatch<TAction>]
 
 const reducer = (state: TMoveContext, action: TAction): TMoveContext => {
     switch (action.type) {
-        case "placeUnit": {
-            return state
+        case "updateShop": {
+            return {...state, shop: action.payload}
         }
         case "selectGood": {
             return {...state, selectedGood: action.payload}
+        }
+        case "updateWallet": {
+            return {...state, wallet: action.payload}
         }
         default: {
             return state

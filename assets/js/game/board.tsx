@@ -1,7 +1,8 @@
-import React, {CSSProperties, useEffect} from "react"
+import React, {CSSProperties, useContext, useEffect} from "react"
 import styles from "./board.module.scss"
 import fieldStyles from "./field.module.scss"
 import {Field} from "./field"
+import {MoveContext} from "./moveContext"
 
 interface BoardProps {
     board: TBoard
@@ -25,6 +26,8 @@ type TRevivalSpot = {
 }
 
 export const Board = ({board, reversed, myMove}: BoardProps) => {
+    const [ctx, dispatch] = useContext(MoveContext)
+
     useEffect(() => {
         board.revival_spots.forEach(({column, row}) => {
             getField(board, reversed, column, row)?.classList.add(fieldStyles.revivalSpot)
