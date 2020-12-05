@@ -1,17 +1,20 @@
-import React from "react"
+import React, {ReactNode} from "react"
 import styles from "./field.module.scss"
 
 interface FieldProps {
-    column: number
-    row: number
-    isRevival: boolean
+    isRevivalSpot: boolean
+    availableToPlace: boolean
     onClick: (() => void) | undefined
+    children: ReactNode
 }
 
-export const Field = ({column, row, isRevival, onClick}: FieldProps) => (
+export const Field = ({isRevivalSpot, availableToPlace, onClick, children}: FieldProps) => (
     <div className={styles.field} onClick={onClick}>
-        <div data-index={`${column}-${row}`}
-             className={`${styles.content} ${isRevival && styles.revivalSpot}`}
-        />
+        <div className={`${styles.content} 
+                         ${isRevivalSpot && styles.revivalSpot} 
+                         ${availableToPlace && styles.availableToPlace}`}
+        >
+            {children}
+        </div>
     </div>
 )

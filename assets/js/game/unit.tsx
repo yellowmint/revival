@@ -22,13 +22,20 @@ const kinds = {
 
 export type TKind = "golem" | "minotaur" | "satyr" | "wraith"
 
+interface UnitProps {
+    unit: TUnit
+}
+
 export type TUnit = {
     kind: TKind
     level: number
+    live?: number
+    row?: number
+    column?: number
 }
 
-export const Unit = ({kind, level}: TUnit) => (
+export const Unit = ({unit}: UnitProps) => (
     <section className={styles.unit}>
-        <img src={kinds[kind][level-1]} alt={kind}/>
+        <img src={kinds[unit.kind][unit.level-1]} alt={unit.kind}/>
     </section>
 )

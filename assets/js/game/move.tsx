@@ -8,14 +8,15 @@ interface MoveProps {
 }
 
 export const Move = ({channel, active}: MoveProps) => {
-    const [ctx] = useContext(MoveContext)
+    const [ctx, dispatch] = useContext(MoveContext)
+
+    const endRound = () => {
+        channel.push("end_round", {moves: ctx.moves})
+        dispatch({type: "roundEnd"})
+    }
 
     return (
-        <button type="button"
-                className="button"
-                onClick={() => channel.push("end_round", {moves: ctx.moves})}
-                disabled={!active}
-        >
+        <button type="button" className="button" onClick={endRound} disabled={!active}>
             End round
         </button>
     )

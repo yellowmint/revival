@@ -46,7 +46,7 @@ interface TShopUnitProps {
 
 export const ShopUnit = ({good, selected}: TShopUnitProps) => (
     <div className={`${styles.shopUnit} ${selected && styles.selected}`}>
-        <Unit kind={good.kind} level={good.level}/>
+        <Unit unit={good}/>
         <div className="swell-around">
             <span className={styles.countBadge}>{good.count}</span>
             <span className={styles.moneyBadge}>{good.price}</span>

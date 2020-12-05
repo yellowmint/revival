@@ -20,6 +20,7 @@ type TAction = { type: "updateShop", payload: TShop }
     | { type: "selectGood", payload: TGood }
     | { type: "updateWallet", payload: TWallet }
     | { type: "placeUnit", payload: { column: number, row: number } }
+    | { type: "roundEnd" }
 
 const initial = {
     shop: {
@@ -48,6 +49,9 @@ const reducer = (state: TMoveContext, action: TAction): TMoveContext => {
         }
         case "placeUnit": {
             return placeUnit(state, action.payload)
+        }
+        case "roundEnd": {
+            return {...state, moves: []}
         }
         default: {
             return state

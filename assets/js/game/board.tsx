@@ -1,8 +1,8 @@
-import React, {CSSProperties, useContext, useEffect} from "react"
+import React, {CSSProperties, ReactNode, useContext} from "react"
 import styles from "./board.module.scss"
-import fieldStyles from "./field.module.scss"
 import {Field} from "./field"
 import {MoveContext} from "./moveContext"
+import {TUnit, Unit} from "./unit"
 
 interface BoardProps {
     board: TBoard
@@ -17,8 +17,6 @@ export type TBoard = {
     revival_spots: Array<TRevivalSpot>
 }
 
-type TUnit = {}
-
 type TRevivalSpot = {
     column: number
     row: number
@@ -28,40 +26,50 @@ type TRevivalSpot = {
 export const Board = ({board, reversed, myMove}: BoardProps) => {
     const [ctx, dispatch] = useContext(MoveContext)
 
-    useEffect(() => {
-        const columnsTimes = [...Array(board.columns)]
-        columnsTimes.forEach((_, idx) => {
-            const field = getField(board, true, idx + 1, 1)
-            myMove
-                ? field?.classList.add(fieldStyles.availableToPlace)
-                : field?.classList.remove(fieldStyles.availableToPlace)
-        })
-    }, [board, reversed, myMove])
-
-    useEffect(() => {
-        ctx.moves.forEach(move => {
-            if (move.type !== "place_unit") return
-            const field = getField(board, reversed, move.position.column, move.position.row)
-            if (field) {
-                field.classList.remove(fieldStyles.availableToPlace)
-                field.innerHTML = "siema"
-            }
-        })
-    }, [ctx.moves])
-
-    const placeUnit = (column: number, row: number) => {
-        if (!myMove) return
-
-        column = getColumn(board.columns, reversed, column)
-        row = getRow(board.rows, reversed, row)
-        dispatch({type: "placeUnit", payload: {column: column, row: row}})
-    }
-
     const isRevivalSpot = (columnIdx: number, rowIdx: number): boolean => {
         columnIdx = getColumn(board.columns, reversed, columnIdx)
         rowIdx = getRow(board.rows, reversed, rowIdx)
 
         return !!board.revival_spots.find(({column, row}) => column === columnIdx && row === rowIdx)
+    }
+
+    const availableToPlace = (columnIdx: number, rowIdx: number): boolean => {
+        if (!myMove) return false
+        if (rowIdx !== board.rows) return false
+
+        columnIdx = getColumn(board.columns, reversed, columnIdx)
+        rowIdx = getRow(board.rows, reversed, rowIdx)
+
+        const alreadyPlaced = ctx.moves.find(move => {
+            if (move.type !== "place_unit") return false
+            return move.position.column === columnIdx && move.position.row === rowIdx
+        })
+
+        return !alreadyPlaced
+    }
+
+    const getUnit = (columnIdx: number, rowIdx: number): ReactNode => {
+        columnIdx = getColumn(board.columns, reversed, columnIdx)
+        rowIdx = getRow(board.rows, reversed, rowIdx)
+
+        const unit = board.units.find(unit => unit.column === columnIdx && unit.row === rowIdx)
+        if (unit) return <Unit unit={unit}/>
+
+        const move = ctx.moves.find(move => {
+            if (move.type !== "place_unit") return false
+            return move.position.column === columnIdx && move.position.row === rowIdx
+        })
+        if (move) return <Unit unit={{kind: move.unit.kind, level: move.unit.level}}/>
+
+        return <></>
+    }
+
+    const placeUnit = (columnIdx: number, rowIdx: number) => {
+        if (!myMove) return
+
+        columnIdx = getColumn(board.columns, reversed, columnIdx)
+        rowIdx = getRow(board.rows, reversed, rowIdx)
+        dispatch({type: "placeUnit", payload: {column: columnIdx, row: rowIdx}})
     }
 
     return (
@@ -72,21 +80,17 @@ export const Board = ({board, reversed, myMove}: BoardProps) => {
                 {[...Array(board.rows)].map((_, i) => ++i).map(rowIdx =>
                     [...Array(board.columns)].map((_, i) => ++i).map(columnIdx =>
                         <Field key={`${columnIdx}-${rowIdx}`}
-                               column={columnIdx} row={rowIdx}
                                onClick={rowIdx === board.rows ? () => placeUnit(columnIdx, rowIdx) : undefined}
-                               isRevival={isRevivalSpot(columnIdx, rowIdx)}
-                        />
+                               isRevivalSpot={isRevivalSpot(columnIdx, rowIdx)}
+                               availableToPlace={availableToPlace(columnIdx, rowIdx)}
+                        >
+                            {getUnit(columnIdx, rowIdx)}
+                        </Field>
                     )
                 )}
             </section>
         </article>
     )
-}
-
-function getField(board: TBoard, reversed: boolean, column: number, row: number) {
-    column = getColumn(board.columns, reversed, column)
-    row = getRow(board.rows, reversed, row)
-    return document.querySelector(`div[data-index="${column}-${row}"]`)
 }
 
 function getColumn(columns: number, reversed: boolean, column: number) {
