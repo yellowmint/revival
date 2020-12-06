@@ -11,24 +11,23 @@ defmodule Revival.Games.Timer do
 
   @impl true
   def init(state) do
-    {:ok, state, state.timeout}
+    {:ok, state, 3200}
   end
 
   @impl true
-  def handle_cast(:touch, state) do
+  def handle_cast({:update, play}, state) do
+    state.callback.(play)
     {:noreply, state, state.timeout}
   end
 
   @impl true
   def handle_info(:timeout, state) do
-    case Games.timeout(state.play_id) do
-      {:next, play} ->
-        state.callback.(play)
-        {:noreply, state, state.timeout}
+    {command, play} = Games.timeout(state.play_id)
+    state.callback.(play)
 
-      {:stop, play} ->
-        state.callback.(play)
-        {:stop, :play_stopped, state}
+    case command do
+      :next -> {:noreply, state, state.timeout}
+      :stop -> {:stop, :play_stopped, state}
     end
   end
 end

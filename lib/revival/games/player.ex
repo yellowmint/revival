@@ -3,6 +3,7 @@ defmodule Revival.Games.Player do
   import Ecto.Changeset
   import Ecto.Query, warn: false
 
+  alias Revival.Repo
   alias Revival.{Repo, Accounts}
   alias Revival.Games.Player
 
@@ -41,6 +42,9 @@ defmodule Revival.Games.Player do
     end
   end
 
+  def opponent_for("blue"), do: "red"
+  def opponent_for("red"), do: "blue"
+
   defp create_player(user_id) do
     user = Accounts.get_user!(user_id)
 
@@ -59,11 +63,11 @@ defmodule Revival.Games.Player do
 
   defp increase_rank(nil), do: nil
   defp increase_rank(user_id) do
-    Repo.update(from p in Player, where: p.user_id == ^user_id, update: [inc: [rank: 1]])
+    Repo.update_all(from(p in Player, where: p.user_id == ^user_id), [inc: [rank: 1]])
   end
 
   defp decrease_rank(nil), do: nil
   defp decrease_rank(user_id) do
-    Repo.update(from p in Player, where: p.user_id == ^user_id and p.rank > 1, update: [inc: [rank: -1]])
+    Repo.update_all(from(p in Player, where: p.user_id == ^user_id and p.rank > 1), [inc: [rank: -1]])
   end
 end

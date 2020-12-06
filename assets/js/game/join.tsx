@@ -4,10 +4,10 @@ import {useAuthToken} from "./useAuthToken"
 
 interface JoinProps {
     channel: Channel
-    playerIdx: number | null
+    joined: boolean
 }
 
-export const Join = ({channel, playerIdx}: JoinProps) => {
+export const Join = ({channel, joined}: JoinProps) => {
     const [name, setName] = useState("")
     const {authToken} = useAuthToken()
 
@@ -16,7 +16,7 @@ export const Join = ({channel, playerIdx}: JoinProps) => {
         channel.push("join_play", {name: name})
     }
 
-    if (playerIdx !== null) return (
+    if (joined) return (
         <section className="narrow text-center">
             <p>Waiting for opponent to join the game.</p>
         </section>

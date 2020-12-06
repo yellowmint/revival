@@ -27,4 +27,19 @@ defmodule Revival.Games.Board do
 
   defp revival_line(rows, "blue"), do: round(rows / 4)
   defp revival_line(rows, "red"), do: rows - revival_line(rows, "blue") + 1
+
+  def place_unit(board, unit) do
+    if get_units(board.units, [unit]) != [], do: raise "another unit already in field"
+
+    board
+    |> Map.put(:units, board.units ++ [unit])
+  end
+
+  defp get_units(units, fields) do
+    Enum.filter(units, fn unit ->
+      Enum.find_index(fields, fn field ->
+        unit.column == field.column and unit.row == field.row
+      end)
+    end)
+  end
 end

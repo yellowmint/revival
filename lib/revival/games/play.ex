@@ -3,7 +3,7 @@ defmodule Revival.Games.Play do
   import Ecto.Changeset
 
   alias Revival.Utils
-  alias Revival.Games.{Play, Board, Shop, Wallet}
+  alias Revival.Games.{Play, Player, Board, Shop, Wallet, Move}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @derive {
@@ -48,7 +48,7 @@ defmodule Revival.Games.Play do
     |> Map.put(:board, Board.create_revival_spots(play.board))
     |> Map.put(:shop, Shop.new_shop(play.mode))
     |> Map.put(:round, 0)
-    |> Map.put(:started_at, next_round_deadline(play))
+    |> Map.put(:started_at, NaiveDateTime.add(NaiveDateTime.utc_now(), 3))
     |> Map.put(:timer_pid, inspect(timer_pid))
   end
 
@@ -58,19 +58,12 @@ defmodule Revival.Games.Play do
     |> Enum.map(fn player -> Map.put(player, :wallet, Wallet.new_wallet(mode)) end)
   end
 
-  defp next_round_deadline(%{mode: mode}) do
-    NaiveDateTime.utc_now()
-    |> NaiveDateTime.add(round_time(mode))
-  end
-
-  def round_time("classic"), do: 10
-
   def start_changes(play) do
     %{}
     |> Map.put(:status, "playing")
     |> Map.put(:round, 1)
     |> Map.put(:next_move, Enum.random(["blue", "red"]))
-    |> Map.put(:next_move_deadline, next_round_deadline(play))
+    |> Map.put(:next_move_deadline, Move.next_round_deadline(play.mode))
   end
 
   def finish_changes(play, :timeout) do
@@ -83,17 +76,29 @@ defmodule Revival.Games.Play do
   defp determine_winner(play, :timeout) do
     cond do
       play.round <= 5 -> "draw"
-      true -> opponent_for(play.next_move)
+      true -> Player.opponent_for(play.next_move)
     end
   end
 
-  defp opponent_for("blue"), do: "red"
-  defp opponent_for("red"), do: "blue"
-
   def changeset(play, attrs \\ %{}) do
     play
-    |> cast(attrs, [:mode, :status, :round, :next_move, :next_move_deadline, :timer_pid, :board, :shop, :players,
-                    :started_at, :finished_at, :winner])
+    |> cast(
+         attrs,
+         [
+           :mode,
+           :status,
+           :round,
+           :next_move,
+           :next_move_deadline,
+           :timer_pid,
+           :board,
+           :shop,
+           :players,
+           :started_at,
+           :finished_at,
+           :winner
+         ]
+       )
     |> validate_required([:mode, :status, :board])
     |> validate_inclusion(:mode, ["classic"])
     |> validate_inclusion(:status, ["joining", "warming_up", "playing", "finished"])
@@ -123,7 +128,8 @@ defmodule Revival.Games.Play do
 
   def unify_keys(play) do
     play
-    |> Map.put(:board, Utils.convert_map_keys_to_atoms(play.board))
-    |> Map.put(:players, Enum.map(play.players, &Utils.convert_map_keys_to_atoms/1))
+    |> Map.put(:board, Utils.keys_to_atoms(play.board))
+    |> Map.put(:players, Utils.keys_to_atoms(play.players))
+    |> Map.put(:shop, Utils.keys_to_atoms(play.shop))
   end
 end

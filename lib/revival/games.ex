@@ -4,7 +4,7 @@ defmodule Revival.Games do
   """
   import Ecto.Query, warn: false
   alias Revival.Repo
-  alias Revival.Games.{Play, Player, Timer}
+  alias Revival.Games.{Play, Player, Timer, Move}
 
   @doc """
   Returns the players ranking.
@@ -128,17 +128,27 @@ defmodule Revival.Games do
   def warm_up!(play, update_callback) do
     if !can_warm_up?(play), do: raise "Warm up not possible"
 
-    {:ok, pid} = Timer.start(
-      %Timer{play_id: play.id, callback: update_callback, timeout: Play.round_time(play.mode) * 1000 + 100}
-    )
+    {:ok, pid} =
+      %Timer{
+        play_id: play.id,
+        callback: update_callback,
+        timeout: Move.round_time(play.mode) * 1000 + 200
+      }
+      |> Timer.start()
 
     play
     |> Play.changeset(Play.warm_up_changes(play, pid))
     |> Repo.update!()
   end
 
+  @doc """
+  Execute when play's timer has finished counting down.
+  When play is in `warming_up` status timeout start `playing` phase.
+  When play is in `playing` status timeout ends play caused by not activity of one player.
+  """
   def timeout(play_id) do
-    get_play!(play_id)
+    play_id
+    |> get_play!()
     |> handle_timeout()
   end
 
@@ -163,11 +173,37 @@ defmodule Revival.Games do
   end
 
   @doc """
+  Handle players moves made during current round.
+  """
+  def end_round(play_id, player_id, moves) do
+    play =
+      play_id
+      |> get_play!()
+      |> Move.ensure_correct_player_move!(player_id)
+
+    play
+    |> Play.changeset(Move.next_move_changes(play, moves))
+    |> Repo.update!()
+    |> notify_client
+  end
+
+  defp notify_client(play) do
+    timer_pid =
+      play.timer_pid
+      |> String.replace_prefix("#PID", "")
+      |> String.to_charlist()
+      |> :erlang.list_to_pid()
+
+    GenServer.cast(timer_pid, {:update, play})
+    play
+  end
+
+  @doc """
   Returns play that can be easily converted to JSON and safely send to external client.
   """
   def client_encode(play) do
     play
-    |> Map.put(:round_time, Play.round_time(play.mode))
+    |> Map.put(:round_time, Move.round_time(play.mode))
     |> Map.put(:players, Enum.map(play.players, &Player.client_encode/1))
   end
 end

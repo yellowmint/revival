@@ -23,5 +23,10 @@
     &.revivalSpot {
       background-color: #f1e6b9;
     }
+
+    &.availableToPlace {
+      background-color: #cff1cb;
+      cursor: pointer;
+    }
   }
 }

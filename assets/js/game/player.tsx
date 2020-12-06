@@ -1,10 +1,12 @@
-import React from "react"
+import React, {useContext, useEffect} from "react"
 import styles from "./player.module.scss"
+import {MoveContext} from "./moveContext"
 
 interface PlayerProps {
     player: TPlayer
     nextMove: string
     winner: string
+    me: boolean
 }
 
 export type TPlayer = {
@@ -20,9 +22,17 @@ export type TWallet = {
     mana: number
 }
 
-export const Player = ({player, nextMove, winner}: PlayerProps) => {
+export const Player = ({player, nextMove, winner, me}: PlayerProps) => {
+    const [ctx, dispatch] = useContext(MoveContext)
+
+    useEffect(() => {
+        if (!player) return
+        dispatch({type: "updateWallet", payload: player.wallet})
+    }, [player])
+
     if (!player) return <></>
 
+    const wallet = me ? ctx.wallet : player.wallet
     const isWinner = winner && player.label === winner
 
     return (
@@ -31,15 +41,15 @@ export const Player = ({player, nextMove, winner}: PlayerProps) => {
                 <span className={styles.name}>{player.name}</span>
                 <span className={styles.rank}>({player.rank})</span>
             </div>
-            {player.wallet && <>
+            {wallet && <>
                 <div className={styles.money}>
-                    Money: {player.wallet.money}
+                    Money: {wallet.money}
                 </div>
                 <div className={styles.mana}>
-                    Mana: {player.wallet.mana}
+                    Mana: {wallet.mana}
                 </div>
                 <div className={styles.currentMove}>
-                    {nextMove === player.label && <span className={styles.dot}/>}
+                    <span className={`${styles.dot} ${nextMove === player.label ? styles.dotFiled : styles.dotEmpty}`}/>
                 </div>
             </>}
         </section>

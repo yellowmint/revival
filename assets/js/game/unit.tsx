@@ -14,21 +14,30 @@ import wraith2 from "./units/wraith_2.png"
 import wraith3 from "./units/wraith_3.png"
 
 const kinds = {
+    "satyr": [satyr1, satyr2, satyr3],
     "golem": [golem1, golem2, golem3],
     "minotaur": [minotaur1, minotaur2, minotaur3],
-    "satyr": [satyr1, satyr2, satyr3],
     "wraith": [wraith1, wraith2, wraith3]
 }
 
 export type TKind = "golem" | "minotaur" | "satyr" | "wraith"
 
+interface UnitProps {
+    unit: TUnit
+}
+
 export type TUnit = {
     kind: TKind
     level: number
+    live?: number
+    row?: number
+    column?: number
+    label?: string
 }
 
-export const Unit = ({kind, level}: TUnit) => (
-    <section className={styles.unit}>
-        <img src={kinds[kind][level-1]} alt={kind}/>
+export const Unit = ({unit}: UnitProps) => (
+    <section className={`${styles.unit} ${unit.label === "red" && styles.red} ${unit.label === "blue" && styles.blue}`}>
+        <img src={kinds[unit.kind][unit.level - 1]} alt={unit.kind}/>
+        <span>{unit.live}</span>
     </section>
 )
