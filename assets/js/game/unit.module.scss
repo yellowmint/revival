@@ -1,7 +1,24 @@
 .unit {
+  position: relative;
+  height: 100%;
+
+  &.red {
+    background-color: #f5e0e0;
+  }
+
+  &.blue {
+    background-color: #e2edf5;
+  }
+
   img {
     display: block;
     width: 100%;
     height: auto;
+  }
+
+  span {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
   }
 }

@@ -32,10 +32,12 @@ export type TUnit = {
     live?: number
     row?: number
     column?: number
+    label?: string
 }
 
 export const Unit = ({unit}: UnitProps) => (
-    <section className={styles.unit}>
-        <img src={kinds[unit.kind][unit.level-1]} alt={unit.kind}/>
+    <section className={`${styles.unit} ${unit.label === "red" && styles.red} ${unit.label === "blue" && styles.blue}`}>
+        <img src={kinds[unit.kind][unit.level - 1]} alt={unit.kind}/>
+        <span>{unit.live}</span>
     </section>
 )

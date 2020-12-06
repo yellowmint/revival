@@ -44,8 +44,12 @@ export const Board = ({board, reversed, myMove}: BoardProps) => {
             if (move.type !== "place_unit") return false
             return move.position.column === columnIdx && move.position.row === rowIdx
         })
+        if (alreadyPlaced) return false
 
-        return !alreadyPlaced
+        const anotherUnit = board.units.find(unit => (
+            unit.column === columnIdx && unit.row === rowIdx
+        ))
+        return !anotherUnit
     }
 
     const getUnit = (columnIdx: number, rowIdx: number): ReactNode => {
