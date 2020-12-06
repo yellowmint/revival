@@ -5,7 +5,7 @@ defmodule Revival.GamesTest do
   alias Revival.Games
 
   describe "plays" do
-    alias Revival.Games.{Board, Shop, Wallet, Move}
+    alias Revival.Games.{Board, Shop, Wallet, Move, Unit}
     alias Revival.Games.Shop.Good
     alias Revival.{AccountsFactory, GamesFactory}
 
@@ -149,6 +149,9 @@ defmodule Revival.GamesTest do
       player1 = Enum.fetch!(play.players, player1_idx)
 
       assert player1.wallet.money == 35
+      assert play.board.units == [
+               %Unit{kind: "satyr", level: 1, column: 8, row: 1, label: player1.label, live: 15, attack: 10}
+             ]
     end
   end
 end

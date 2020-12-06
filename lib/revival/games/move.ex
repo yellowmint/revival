@@ -1,5 +1,5 @@
 defmodule Revival.Games.Move do
-  alias Revival.Games.{Shop, Wallet, Player}
+  alias Revival.Games.{Shop, Wallet, Player, Unit, Board}
 
   def ensure_correct_player_move!(play, player_id) do
     {current_player, _} = get_player_of_current_round(play)
@@ -38,11 +38,15 @@ defmodule Revival.Games.Move do
 
     {shop, good} = Shop.buy_unit(play.shop, kind, level)
 
-    wallet = Wallet.take_money_for_good!(current_player.wallet, good)
+    wallet = Wallet.withdraw_money_for_good!(current_player.wallet, good)
     current_player = Map.put(current_player, :wallet, wallet)
+
+    unit = Unit.new_from_shop_good(good, column, row, current_player.label)
+    board = Board.place_unit(play.board, unit)
 
     play
     |> Map.put(:shop, shop)
+    |> Map.put(:board, board)
     |> Map.put(:players, List.replace_at(play.players, current_player_idx, current_player))
   end
 end

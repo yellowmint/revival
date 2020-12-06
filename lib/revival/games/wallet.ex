@@ -11,7 +11,7 @@ defmodule Revival.Games.Wallet do
     }
   end
 
-  def take_money_for_good!(wallet, good) do
+  def withdraw_money_for_good!(wallet, good) do
     wallet
     |> Map.put(:money, wallet.money - good.price)
     |> ensure_founds!
