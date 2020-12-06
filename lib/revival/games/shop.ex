@@ -1,5 +1,4 @@
 defmodule Revival.Games.Shop do
-  alias Revival.Utils
   alias Revival.Games.Shop
 
   @derive Jason.Encoder

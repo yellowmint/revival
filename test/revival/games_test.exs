@@ -150,7 +150,7 @@ defmodule Revival.GamesTest do
 
       assert player1.wallet.money == 35
       assert play.board.units == [
-               %Unit{kind: "satyr", level: 1, column: 8, row: 1, label: player1.label, live: 15, attack: 10}
+               %Unit{kind: "satyr", level: 1, column: 8, row: 1, label: player1.label, live: 15, attack: 10, speed: 3}
              ]
     end
   end
