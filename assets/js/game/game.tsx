@@ -1,4 +1,5 @@
 import React from "react"
+import styles from "./game.module.scss"
 import {Board} from "./board"
 import {TGame, useConnectionLogic} from "./useConnectionLogic"
 import {Join} from "./join"
@@ -16,7 +17,7 @@ export const Game = () => {
     const {joined, myMove, reversed} = determinePlayer(game, playerId)
 
     return (
-        <article>
+        <article className={styles.gameContainer}>
             <Status status={game.status} round={game.round}/>
             {game.status === "joining" && (
                 <Join channel={channel} joined={joined}/>
@@ -28,17 +29,19 @@ export const Game = () => {
                 <Timer nextDeadline={game.next_move_deadline} roundTime={game.round_time}/>
             )}
 
-            <Player me={false} player={game.players[0]} nextMove={game.next_move} winner={game.winner}/>
-            <MoveContextProvider>
-                <Board board={game.board} reversed={reversed} myMove={myMove}/>
-                {["warming_up", "playing"].includes(game.status) && (
-                    <Shop shop={game.shop}/>
-                )}
-                {["warming_up", "playing"].includes(game.status) && (
-                    <Move channel={channel} active={myMove}/>
-                )}
-                <Player me={true} player={game.players[1]} nextMove={game.next_move} winner={game.winner}/>
-            </MoveContextProvider>
+            <article className={styles.game}>
+                <Player me={false} player={game.players[0]} nextMove={game.next_move} winner={game.winner}/>
+                <MoveContextProvider>
+                    <Board board={game.board} reversed={reversed} myMove={myMove}/>
+                    <div className={styles.moves}>
+                        {["warming_up", "playing"].includes(game.status) && <>
+                            <Shop shop={game.shop}/>
+                            <Move channel={channel} active={myMove}/>
+                        </>}
+                    </div>
+                    <Player me={true} player={game.players[1]} nextMove={game.next_move} winner={game.winner}/>
+                </MoveContextProvider>
+            </article>
         </article>
     )
 }

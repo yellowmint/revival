@@ -1,0 +1,24 @@
+.gameContainer {
+  margin: 10px;
+
+  .game {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto auto;
+
+    @media (min-width: 800px) {
+      grid-template-columns: auto 350px;
+      grid-template-rows: auto 1fr auto;
+
+      .moves {
+        grid-column: 2/3;
+        grid-row: 1/4;
+        padding: 10px;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+    }
+  }
+}

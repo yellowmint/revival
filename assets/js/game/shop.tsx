@@ -32,28 +32,18 @@ export const Shop = ({shop}: ShopProps) => {
             <div className={styles.wrapper}>
                 {ctx.shop.goods.map(good => (
                     <div key={`${good.kind}-${good.level}`}
+                         className={`${styles.shopUnit} ${ctx.selectedGood === good && styles.selected}`}
                          onClick={() => dispatch({type: "selectGood", payload: good})}
                     >
-                        <ShopUnit good={good} selected={ctx.selectedGood === good}/>
+                        <Unit unit={good}/>
+                        <div className="swell-around">
+                            <span className={styles.countBadge}>{good.count}</span>
+                            <span className={styles.moneyBadge}>{good.price.money}</span>
+                            {good.price.mana ? <span className={styles.manaBadge}>{good.price.mana}</span> : <></>}
+                        </div>
                     </div>
                 ))}
             </div>
         </section>
     )
 }
-
-interface TShopUnitProps {
-    good: TGood
-    selected: boolean
-}
-
-export const ShopUnit = ({good, selected}: TShopUnitProps) => (
-    <div className={`${styles.shopUnit} ${selected && styles.selected}`}>
-        <Unit unit={good}/>
-        <div className="swell-around">
-            <span className={styles.countBadge}>{good.count}</span>
-            <span className={styles.moneyBadge}>{good.price.money}</span>
-            {good.price.mana ? <span className={styles.manaBadge}>{good.price.mana}</span> : <></>}
-        </div>
-    </div>
-)
