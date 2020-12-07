@@ -15,6 +15,8 @@ defmodule Revival.Games.Move do
 
   def next_move_changes(play, moves) do
     handle_moves(play, moves)
+    |> Board.next_round()
+    |> Board.remove_corpses()
     |> Map.put(:round, play.round + 1)
     |> Map.put(:next_move, Player.opponent_for(play.next_move))
     |> Map.put(:next_move_deadline, next_round_deadline(play.mode))
@@ -42,7 +44,7 @@ defmodule Revival.Games.Move do
     current_player = Map.put(current_player, :wallet, wallet)
 
     unit = Unit.new_from_shop_good(good, column, row, current_player.label)
-    board = Board.place_unit(play.board, unit)
+    board = Board.place_unit(play.board, unit, current_player.label)
 
     play
     |> Map.put(:shop, shop)
