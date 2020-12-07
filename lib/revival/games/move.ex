@@ -13,6 +13,12 @@ defmodule Revival.Games.Move do
     {player, idx}
   end
 
+  def get_opponent_of_current_round(play) do
+    player = Enum.find(play.players, fn x -> x.label != play.next_move end)
+    idx = Enum.find_index(play.players, fn x -> x.id == player.id end)
+    {player, idx}
+  end
+
   def next_move_changes(play, moves) do
     handle_moves(play, moves)
     |> Board.next_round()
