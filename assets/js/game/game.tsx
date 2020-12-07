@@ -29,7 +29,7 @@ export const Game = () => {
                 <Timer nextDeadline={game.next_move_deadline} roundTime={game.round_time}/>
             )}
 
-            <article className={styles.game}>
+            <article className={game.status !== "joining" && styles.game}>
                 <Player me={false} player={game.players[0]} nextMove={game.next_move} winner={game.winner}/>
                 <MoveContextProvider>
                     <Board board={game.board} reversed={reversed} myMove={myMove}/>
