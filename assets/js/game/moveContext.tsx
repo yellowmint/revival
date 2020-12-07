@@ -62,6 +62,12 @@ const reducer = (state: TMoveContext, action: TAction): TMoveContext => {
 const placeUnit = (state: TMoveContext, payload: { column: number, row: number }): TMoveContext => {
     if (!state.selectedGood) return state
 
+    const alreadyPlaced = state.moves.find(move => {
+        if (move.type !== "place_unit") return false
+        return move.position.column === payload.column && move.position.row === payload.row
+    })
+    if (alreadyPlaced) return state
+
     const goodIdx = state.shop.goods.findIndex(x => x === state.selectedGood)
     if (goodIdx === -1) return state
 
