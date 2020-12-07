@@ -101,6 +101,7 @@ defmodule Revival.Games.Board do
   defp get_enemies_to_attack(units, unit) do
     units
     |> Enum.filter(fn x -> x.label != unit.label end)
+    |> Enum.filter(&is_alive/1)
     |> get_units_from_fields(attack_fields(unit))
   end
 
