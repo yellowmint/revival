@@ -1,11 +1,16 @@
 .player {
-  margin: 30px 0;
-  padding: 13px 15px 15px 15px;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
+  margin: 15px 0;
+  padding: 10px;
   background-color: #efeedb;
   border-radius: 5px;
+
+  &.red {
+    border: 2px solid #fcaaaa;
+  }
+
+  &.blue {
+    border: 2px solid #afdaff;
+  }
 
   &.winner {
     border: 3px solid goldenrod;
@@ -17,6 +22,7 @@
     justify-content: center;
 
     .name {
+      word-wrap: anywhere;
       font-size: large;
       font-weight: bold;
     }
@@ -24,36 +30,47 @@
     .rank {
       color: #b18414;
       font-size: small;
-      margin-left: 5px;
+      margin: 0 5px;
       padding-bottom: 5px;
     }
   }
 
-  .money {
-    color: #a57402;
-  }
+  .stats {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
 
-  .mana {
-    color: #0183ab;
-  }
-
-  .currentMove {
-    .dot {
-      display: block;
-      width: 10px;
-      height: 10px;
-      margin-top: 4px;
-      border-radius: 50px;
-      background-color: #a74644;
-      border: 2px solid #a74644;
+    .live {
+      color: #408801;
     }
 
-    .dotFiled {
-      background-color: #a74644;
+    .money {
+      color: #a57402;
     }
 
-    .dotEmpty {
-      background-color: transparent;
+    .mana {
+      color: #0183ab;
+    }
+
+    .currentMove {
+      .dot {
+        display: block;
+        width: 10px;
+        height: 10px;
+        margin-top: 4px;
+        border-radius: 50px;
+        background-color: #a74644;
+        border: 2px solid #a74644;
+      }
+
+      .dotFiled {
+        background-color: #a74644;
+      }
+
+      .dotEmpty {
+        background-color: transparent;
+      }
     }
   }
 }

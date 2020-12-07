@@ -13,14 +13,35 @@ defmodule Revival.Games.Move do
     {player, idx}
   end
 
+  def get_opponent_of_current_round(play) do
+    player = Enum.find(play.players, fn x -> x.label != play.next_move end)
+    idx = Enum.find_index(play.players, fn x -> x.id == player.id end)
+    {player, idx}
+  end
+
   def next_move_changes(play, moves) do
     handle_moves(play, moves)
     |> Board.next_round()
+    |> check_winner()
     |> Board.remove_corpses()
     |> Map.put(:round, play.round + 1)
     |> Map.put(:next_move, Player.opponent_for(play.next_move))
     |> Map.put(:next_move_deadline, next_round_deadline(play.mode))
     |> Map.from_struct()
+  end
+
+  defp check_winner(play) do
+    case Enum.find(play.players, fn player -> player.live <= 0 end) do
+      nil -> play
+      looser -> handle_win(play, looser)
+    end
+  end
+
+  defp handle_win(play, looser) do
+    play
+    |> Map.put(:status, "finished")
+    |> Map.put(:finished_at, NaiveDateTime.utc_now())
+    |> Map.put(:winner, Player.opponent_for(looser.label))
   end
 
   def next_round_deadline(mode) do
@@ -35,7 +56,16 @@ defmodule Revival.Games.Move do
   end
 
   defp handle_move(%{"type" => "place_unit"} = move, play) do
-    %{"unit" => %{"kind" => kind, "level" => level}, "position" => %{"column" => column, "row" => row}} = move
+    %{
+      "unit" => %{
+        "kind" => kind,
+        "level" => level
+      },
+      "position" => %{
+        "column" => column,
+        "row" => row
+      }
+    } = move
     {current_player, current_player_idx} = get_player_of_current_round(play)
 
     {shop, good} = Shop.buy_unit(play.shop, kind, level)

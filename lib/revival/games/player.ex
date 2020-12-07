@@ -5,13 +5,13 @@ defmodule Revival.Games.Player do
 
   alias Revival.Repo
   alias Revival.{Repo, Accounts}
-  alias Revival.Games.Player
+  alias Revival.Games.{Player, Wallet}
 
   @primary_key {:id, :binary_id, autogenerate: true}
-  @derive {Jason.Encoder, only: [:id, :name, :rank, :user_id, :label, :wallet]}
+  @derive {Jason.Encoder, only: [:id, :name, :rank, :user_id, :label, :live, :wallet]}
 
   def client_encode(player) do
-    Map.take(player, [:id, :name, :rank, :label, :wallet])
+    Map.take(player, [:id, :name, :rank, :label, :live, :wallet])
   end
 
   schema "players" do
@@ -19,6 +19,7 @@ defmodule Revival.Games.Player do
     field :rank, :integer
     field :user_id, :binary_id
     field :label, :string, virtual: true
+    field :live, :integer, virtual: true
     field :wallet, :map, virtual: true
 
     timestamps()
@@ -52,6 +53,17 @@ defmodule Revival.Games.Player do
     |> Player.changeset()
     |> Repo.insert!()
   end
+
+  def prepare_players_to_play(players, mode) do
+    players
+    |> Enum.shuffle()
+    |> List.update_at(0, &Map.put(&1, :label, "blue"))
+    |> List.update_at(1, &Map.put(&1, :label, "red"))
+    |> Enum.map(&Map.put(&1, :wallet, Wallet.new_wallet(mode)))
+    |> Enum.map(&Map.put(&1, :live, initial_live(mode)))
+  end
+
+  defp initial_live("classic"), do: 150
 
   def handle_win(_players, "draw"), do: nil
   def handle_win(players, winner) do
