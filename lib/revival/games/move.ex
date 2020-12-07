@@ -23,7 +23,7 @@ defmodule Revival.Games.Move do
     handle_moves(play, moves)
     |> Board.next_round()
     |> check_winner()
-    |> supply_wallet()
+    |> supply_wallets()
     |> Board.remove_corpses()
     |> Map.put(:round, play.round + 1)
     |> Map.put(:next_move, Player.opponent_for(play.next_move))
@@ -45,18 +45,34 @@ defmodule Revival.Games.Move do
     |> Map.put(:winner, Player.opponent_for(looser.label))
   end
 
-  defp supply_wallet(play) do
-    {player, player_idx} = get_player_of_current_round(play)
+  defp supply_wallets(play) do
+    corpses = Enum.filter(play.board.units, fn unit -> unit.live <= 0 end)
+    players = Enum.map(play.players, &corpse_bonus(&1, corpses))
+
+    {_, player_idx} = get_player_of_current_round(play)
+    current_round_player = Enum.fetch!(players, player_idx)
+
     wallet =
-      player.wallet
+      current_round_player.wallet
       |> Wallet.supply(round_bonus(play.round))
       |> Wallet.supply(time_bonus(play.next_move_deadline))
 
-    players =
-      play.players
-      |> List.replace_at(player_idx, Map.put(player, :wallet, wallet))
-
+    players = List.replace_at(players, player_idx, Map.put(current_round_player, :wallet, wallet))
     Map.put(play, :players, players)
+  end
+
+  defp corpse_bonus(player, corpses) do
+    wallet =
+      corpses
+      |> Enum.filter(fn corpse -> corpse.label != player.label end)
+      |> Enum.reduce(player.wallet, &sell_corpse/2)
+
+    Map.put(player, :wallet, wallet)
+  end
+
+  defp sell_corpse(corpse, wallet) do
+    price = Shop.corpse_price(corpse)
+    Wallet.supply(wallet, price)
   end
 
   defp round_bonus(round) do
