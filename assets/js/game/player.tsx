@@ -36,7 +36,11 @@ export const Player = ({player, nextMove, winner, me}: PlayerProps) => {
     const isWinner = winner && player.label === winner
 
     return (
-        <section className={`${styles.player} ${isWinner && styles.winner}`}>
+        <section className={`${styles.player}
+                             ${player.label === "red" && styles.red}
+                             ${player.label === "blue" && styles.blue}
+                             ${isWinner && styles.winner}`}
+        >
             <div className={styles.playerDetails}>
                 <span className={styles.name}>{player.name}</span>
                 <span className={styles.rank}>({player.rank})</span>

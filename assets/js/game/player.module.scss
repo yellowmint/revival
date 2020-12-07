@@ -7,6 +7,14 @@
   background-color: #efeedb;
   border-radius: 5px;
 
+  &.red {
+    border: 2px solid #fcaaaa;
+  }
+
+  &.blue {
+    border: 2px solid #afdaff;
+  }
+
   &.winner {
     border: 3px solid goldenrod;
   }
