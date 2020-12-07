@@ -139,7 +139,7 @@ defmodule Revival.GamesTest do
     end
 
     test "end_round/3 handles moves" do
-      play = GamesFactory.build(:started_play)
+      play = GamesFactory.build(:started_play) |> ensure_blue_player_round
       {player1, player1_idx} = Move.get_player_of_current_round(play)
       moves = [
         %{"type" => "place_unit", "position" => %{"column" => 8, "row" => 1}, "unit" => %{"kind" => "satyr", "level" => 1}}
@@ -150,8 +150,14 @@ defmodule Revival.GamesTest do
 
       assert player1.wallet.money == 35
       assert play.board.units == [
-               %Unit{kind: "satyr", level: 1, column: 8, row: 1, label: player1.label, live: 15, attack: 10, speed: 3}
+               %Unit{kind: "satyr", level: 1, column: 8, row: 4, label: player1.label, live: 15, attack: 10, speed: 3}
              ]
+    end
+
+    def ensure_blue_player_round(%{next_move: "blue"} = play), do: play
+    def ensure_blue_player_round(%{next_move: "red"} = play) do
+      {player, _} = Move.get_player_of_current_round(play)
+      Games.end_round(play.id, player.id, [])
     end
   end
 end
