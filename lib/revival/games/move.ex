@@ -23,6 +23,7 @@ defmodule Revival.Games.Move do
     handle_moves(play, moves)
     |> Board.next_round()
     |> check_winner()
+    |> supply_wallet()
     |> Board.remove_corpses()
     |> Map.put(:round, play.round + 1)
     |> Map.put(:next_move, Player.opponent_for(play.next_move))
@@ -42,6 +43,39 @@ defmodule Revival.Games.Move do
     |> Map.put(:status, "finished")
     |> Map.put(:finished_at, NaiveDateTime.utc_now())
     |> Map.put(:winner, Player.opponent_for(looser.label))
+  end
+
+  defp supply_wallet(play) do
+    {player, player_idx} = get_player_of_current_round(play)
+    wallet =
+      player.wallet
+      |> Wallet.supply(round_bonus(play.round))
+      |> Wallet.supply(time_bonus(play.next_move_deadline))
+
+    players =
+      play.players
+      |> List.replace_at(player_idx, Map.put(player, :wallet, wallet))
+
+    Map.put(play, :players, players)
+  end
+
+  defp round_bonus(round) do
+    cond do
+      round < 10 -> %{money: 20, mana: 0}
+      round < 30 -> %{money: 50, mana: 0}
+      round < 50 -> %{money: 100, mana: 0}
+      true -> %{money: 150, mana: 0}
+    end
+  end
+
+  defp time_bonus(deadline) do
+    diff = NaiveDateTime.diff(deadline, NaiveDateTime.utc_now())
+    cond do
+      diff > 5 -> %{money: 20, mana: 0}
+      diff > 4 -> %{money: 10, mana: 0}
+      diff > 3 -> %{money: 5, mana: 0}
+      true -> %{money: 0, mana: 0}
+    end
   end
 
   def next_round_deadline(mode) do
@@ -70,7 +104,7 @@ defmodule Revival.Games.Move do
 
     {shop, good} = Shop.buy_unit(play.shop, kind, level)
 
-    wallet = Wallet.withdraw_money_for_good!(current_player.wallet, good)
+    wallet = Wallet.withdraw!(current_player.wallet, good.price)
     current_player = Map.put(current_player, :wallet, wallet)
 
     unit = Unit.new_from_shop_good(good, column, row, current_player.label)

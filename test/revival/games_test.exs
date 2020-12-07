@@ -88,8 +88,8 @@ defmodule Revival.GamesTest do
       assert play.timer_pid
       assert play.shop == %Shop{
                goods: [
-                 %Good{kind: "satyr", level: 1, count: 5, price: 15},
-                 %Good{kind: "golem", level: 1, count: 5, price: 20},
+                 %Good{kind: "satyr", level: 1, count: 5, price: %{money: 15, mana: 0}},
+                 %Good{kind: "golem", level: 1, count: 5, price: %{money: 20, mana: 0}},
                ]
              }
       assert Enum.count(play.board.revival_spots) == 2
@@ -148,7 +148,7 @@ defmodule Revival.GamesTest do
       play = Games.end_round(play.id, player1.id, moves)
       player1 = Enum.fetch!(play.players, player1_idx)
 
-      assert player1.wallet.money == 35
+      assert player1.wallet.money == 75 # 50 (base) - 15 (satyr) + 20 (round bound) + 20 (time bonus)
       assert play.board.units == [
                %Unit{kind: "satyr", level: 1, column: 8, row: 4, label: player1.label, live: 15, attack: 10, speed: 3}
              ]

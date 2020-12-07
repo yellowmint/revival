@@ -11,9 +11,10 @@ defmodule Revival.Games.Wallet do
     }
   end
 
-  def withdraw_money_for_good!(wallet, good) do
+  def withdraw!(wallet, amount) do
     wallet
-    |> Map.put(:money, wallet.money - good.price)
+    |> Map.put(:money, wallet.money - amount.money)
+    |> Map.put(:mana, wallet.mana - amount.mana)
     |> ensure_founds!
   end
 
@@ -21,5 +22,11 @@ defmodule Revival.Games.Wallet do
     if wallet.money < 0, do: raise "not enough money for purchase"
     if wallet.mana < 0, do: raise "not enough mana for purchase"
     wallet
+  end
+
+  def supply(wallet, amount) do
+    wallet
+    |> Map.put(:money, wallet.money + amount.money)
+    |> Map.put(:mana, wallet.mana + amount.mana)
   end
 end
