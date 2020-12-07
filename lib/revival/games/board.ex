@@ -149,7 +149,7 @@ defmodule Revival.Games.Board do
     {unit1, unit2}
   end
 
-  defp is_alive(%{live: live}), do: live > 0
+  defp is_alive(unit), do: unit.live > 0
 
   defp attack_enemy_base(play) do
     play.board.units
