@@ -24,6 +24,7 @@ defmodule Revival.Games.Move do
     |> Board.next_round()
     |> check_winner()
     |> supply_wallets()
+    |> Shop.supply_shop()
     |> Board.remove_corpses()
     |> Map.put(:round, play.round + 1)
     |> Map.put(:next_move, Player.opponent_for(play.next_move))
@@ -46,7 +47,7 @@ defmodule Revival.Games.Move do
   end
 
   defp supply_wallets(play) do
-    corpses = Enum.filter(play.board.units, fn unit -> unit.live <= 0 end)
+    corpses = Board.get_corpses(play.board)
     players = Enum.map(play.players, &corpse_bonus(&1, corpses))
 
     {_, player_idx} = get_player_of_current_round(play)

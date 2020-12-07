@@ -167,6 +167,10 @@ defmodule Revival.Games.Board do
     |> Map.put(:players, List.replace_at(play.players, opponent_idx, opponent))
   end
 
+  def get_corpses(board) do
+    Enum.reject(board.units, &is_alive/1)
+  end
+
   def remove_corpses(play) do
     units = Enum.filter(play.board.units, &is_alive/1)
 
