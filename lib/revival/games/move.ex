@@ -44,7 +44,7 @@ defmodule Revival.Games.Move do
     current_player = Map.put(current_player, :wallet, wallet)
 
     unit = Unit.new_from_shop_good(good, column, row, current_player.label)
-    board = Board.place_unit(play.board, unit)
+    board = Board.place_unit(play.board, unit, current_player.label)
 
     play
     |> Map.put(:shop, shop)

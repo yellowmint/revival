@@ -28,8 +28,10 @@ defmodule Revival.Games.Board do
   defp revival_line(rows, "blue"), do: round(rows / 4)
   defp revival_line(rows, "red"), do: rows - revival_line(rows, "blue") + 1
 
-  def place_unit(board, unit) do
+  def place_unit(board, unit, label) do
     if get_units_from_fields(board.units, [unit]) != [], do: raise "another unit already in field"
+    if label == "blue" and unit.row != 1, do: raise "blue player must place units in first row"
+    if label == "red" and unit.row != board.rows, do: raise "red player must place units in last row"
 
     board
     |> Map.put(:units, board.units ++ [unit])
