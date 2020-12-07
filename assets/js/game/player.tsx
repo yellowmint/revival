@@ -14,6 +14,7 @@ export type TPlayer = {
     name: string
     rank: number
     label: string
+    live: number
     wallet: TWallet
 }
 
@@ -45,7 +46,10 @@ export const Player = ({player, nextMove, winner, me}: PlayerProps) => {
                 <span className={styles.name}>{player.name}</span>
                 <span className={styles.rank}>({player.rank})</span>
             </div>
-            {wallet && <>
+            {wallet && <div className={styles.stats}>
+                <div className={styles.live}>
+                    Live: {player.live}
+                </div>
                 <div className={styles.money}>
                     Money: {wallet.money}
                 </div>
@@ -55,7 +59,7 @@ export const Player = ({player, nextMove, winner, me}: PlayerProps) => {
                 <div className={styles.currentMove}>
                     <span className={`${styles.dot} ${nextMove === player.label ? styles.dotFiled : styles.dotEmpty}`}/>
                 </div>
-            </>}
+            </div>}
         </section>
     )
 }
