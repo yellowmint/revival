@@ -15,6 +15,8 @@ defmodule Revival.Games.Move do
 
   def next_move_changes(play, moves) do
     handle_moves(play, moves)
+    |> Board.next_round()
+    |> Board.remove_corpses()
     |> Map.put(:round, play.round + 1)
     |> Map.put(:next_move, Player.opponent_for(play.next_move))
     |> Map.put(:next_move_deadline, next_round_deadline(play.mode))
