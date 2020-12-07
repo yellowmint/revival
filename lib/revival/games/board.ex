@@ -22,7 +22,7 @@ defmodule Revival.Games.Board do
   end
 
   defp new_revival_spot(columns, rows, label) do
-    %{column: Enum.random(2..(columns - 2)), row: revival_line(rows, label), label: label}
+    %{column: Enum.random(2..(columns - 2)), row: revival_line(rows, label)}
   end
 
   defp revival_line(rows, "blue"), do: round(rows / 4)
@@ -68,22 +68,25 @@ defmodule Revival.Games.Board do
 
     case attack(units, unit, unit_idx) do
       {:fought, units} -> {:halt, units}
-      {:no_enemies, units} -> {:cont, forward(units, unit, unit_idx, rows)}
+      {:no_enemies, units} -> forward(units, unit, unit_idx, rows)
     end
   end
 
   defp forward(units, unit, unit_idx, rows_limit) do
-    List.replace_at(units, unit_idx, step_forward(unit, rows_limit))
+    case step_forward(unit, rows_limit) do
+      :border -> {:halt, units}
+      {:step, unit} -> {:cont, List.replace_at(units, unit_idx, unit)}
+    end
   end
 
   defp step_forward(%{label: "blue"} = unit, rows_limit) do
-    if unit.row + 1 <= rows_limit, do: Map.put(unit, :row, unit.row + 1),
-                                   else: unit
+    if unit.row + 1 <= rows_limit, do: {:step, Map.put(unit, :row, unit.row + 1)},
+                                   else: :border
   end
 
   defp step_forward(%{label: "red"} = unit, _) do
-    if unit.row - 1 >= 1, do: Map.put(unit, :row, unit.row - 1),
-                          else: unit
+    if unit.row - 1 >= 1, do: {:step, Map.put(unit, :row, unit.row - 1)},
+                          else: :border
   end
 
   defp attack(units, unit, unit_idx) do

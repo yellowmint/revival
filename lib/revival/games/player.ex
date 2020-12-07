@@ -63,7 +63,7 @@ defmodule Revival.Games.Player do
     |> Enum.map(&Map.put(&1, :live, initial_live(mode)))
   end
 
-  defp initial_live("classic"), do: 100
+  defp initial_live("classic"), do: 150
 
   def handle_win(_players, "draw"), do: nil
   def handle_win(players, winner) do
