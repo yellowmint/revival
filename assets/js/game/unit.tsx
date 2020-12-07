@@ -13,14 +13,21 @@ import wraith1 from "./units/wraith_1.png"
 import wraith2 from "./units/wraith_2.png"
 import wraith3 from "./units/wraith_3.png"
 
-const kinds = {
+type TKinds = {
+    "satyr": Array<string>
+    "golem": Array<string>
+    "minotaur": Array<string>
+    "wraith": Array<string>
+}
+
+const kinds: TKinds = {
     "satyr": [satyr1, satyr2, satyr3],
     "golem": [golem1, golem2, golem3],
     "minotaur": [minotaur1, minotaur2, minotaur3],
     "wraith": [wraith1, wraith2, wraith3]
 }
 
-export type TKind = "golem" | "minotaur" | "satyr" | "wraith"
+export type TKind = keyof TKinds
 
 interface UnitProps {
     unit: TUnit
