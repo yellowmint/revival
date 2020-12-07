@@ -71,8 +71,10 @@ const placeUnit = (state: TMoveContext, payload: { column: number, row: number }
     const goodIdx = state.shop.goods.findIndex(x => x === state.selectedGood)
     if (goodIdx === -1) return state
 
-    if (state.wallet.money - state.selectedGood.price < 0) return state
-    state.wallet.money -= state.selectedGood.price
+    if (state.wallet.money - state.selectedGood.price.money < 0) return state
+    if (state.wallet.mana - state.selectedGood.price.mana < 0) return state
+    state.wallet.money -= state.selectedGood.price.money
+    state.wallet.mana -= state.selectedGood.price.mana
 
     if (state.selectedGood.count > 1) {
         state.selectedGood.count -= 1

@@ -39,6 +39,11 @@
         @extend .badge;
         background-color: #d7cfb6;
       }
+
+      .manaBadge {
+        @extend .badge;
+        background-color: #b6c1d7;
+      }
     }
   }
 }

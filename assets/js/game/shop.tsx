@@ -15,7 +15,10 @@ export type TGood = {
     kind: TKind
     level: number
     count: number
-    price: number
+    price: {
+        money: number
+        mana: number
+    }
 }
 
 export const Shop = ({shop}: ShopProps) => {
@@ -49,7 +52,8 @@ export const ShopUnit = ({good, selected}: TShopUnitProps) => (
         <Unit unit={good}/>
         <div className="swell-around">
             <span className={styles.countBadge}>{good.count}</span>
-            <span className={styles.moneyBadge}>{good.price}</span>
+            <span className={styles.moneyBadge}>{good.price.money}</span>
+            {good.price.mana ? <span className={styles.manaBadge}>{good.price.mana}</span> : <></>}
         </div>
     </div>
 )
