@@ -33,7 +33,7 @@ defmodule Revival.Games.Shop do
 
   def corpse_price(corpse) do
     good = new_good(corpse.kind, corpse.level)
-    %{money: :math.floor(good.price.money / 3), mana: good.level}
+    %{money: :math.floor(good.price.money / 4), mana: good.level * 2}
   end
 
   def buy_unit(shop, kind, level) do

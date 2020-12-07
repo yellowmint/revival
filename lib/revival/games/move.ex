@@ -78,17 +78,17 @@ defmodule Revival.Games.Move do
 
   defp round_bonus(round) do
     cond do
-      round < 10 -> %{money: 20, mana: 0}
-      round < 30 -> %{money: 50, mana: 0}
-      round < 50 -> %{money: 100, mana: 0}
-      true -> %{money: 150, mana: 0}
+      round < 10 -> %{money: 10, mana: 0}
+      round < 30 -> %{money: 20, mana: 0}
+      round < 50 -> %{money: 30, mana: 0}
+      true -> %{money: 50, mana: 0}
     end
   end
 
   defp time_bonus(deadline) do
     diff = NaiveDateTime.diff(deadline, NaiveDateTime.utc_now())
     cond do
-      diff > 5 -> %{money: 20, mana: 0}
+      diff > 5 -> %{money: 15, mana: 0}
       diff > 4 -> %{money: 10, mana: 0}
       diff > 3 -> %{money: 5, mana: 0}
       true -> %{money: 0, mana: 0}
