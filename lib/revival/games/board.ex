@@ -108,7 +108,7 @@ defmodule Revival.Games.Board do
     [
       %{column: unit.column - 1, row: unit.row},
       %{column: unit.column + 1, row: unit.row},
-      %{column: unit.column, row: unit.row - 1},
+      %{column: unit.column, row: unit.row + 1},
     ]
   end
 
@@ -116,7 +116,7 @@ defmodule Revival.Games.Board do
     [
       %{column: unit.column - 1, row: unit.row},
       %{column: unit.column + 1, row: unit.row},
-      %{column: unit.column, row: unit.row + 1},
+      %{column: unit.column, row: unit.row - 1},
     ]
   end
 
