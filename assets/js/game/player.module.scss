@@ -1,15 +1,16 @@
 .player {
   margin: 15px 0;
   padding: 10px;
-  background-color: #efeedb;
-  border-radius: 5px;
+  background-color: #fcfcf7;
+  border-radius: 3px;
+  border: 1px solid #b3b3b3;
 
   &.red {
-    border: 2px solid #fcaaaa;
+    border: 1px solid #be3c3c;
   }
 
   &.blue {
-    border: 2px solid #afdaff;
+    border: 1px solid #3b7bb3;
   }
 
   &.winner {
