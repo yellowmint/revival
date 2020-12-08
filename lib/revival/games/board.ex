@@ -76,24 +76,23 @@ defmodule Revival.Games.Board do
   end
 
   defp forward(units, unit, unit_idx, rows_limit) do
-    case step_forward(unit, rows_limit) do
-      :border -> {:halt, units}
-      {:step, unit} -> {:cont, List.replace_at(units, unit_idx, unit)}
-    end
-  end
-
-  defp step_forward(%{label: "blue"} = unit, rows_limit) do
-    if unit_at_border(unit, rows_limit), do: :border,
-                                         else: {:step, Map.put(unit, :row, unit.row + 1)}
-  end
-
-  defp step_forward(%{label: "red"} = unit, _) do
-    if unit_at_border(unit, nil), do: :border,
-                                  else: {:step, Map.put(unit, :row, unit.row - 1)}
+    if unit_at_border(unit, rows_limit), do: {:halt, units},
+                                         else: try_step_forward(units, unit, unit_idx)
   end
 
   defp unit_at_border(%{label: "blue"} = unit, rows_limit), do: unit.row == rows_limit
   defp unit_at_border(%{label: "red"} = unit, _), do: unit.row == 1
+
+  defp try_step_forward(units, unit, unit_idx) do
+    unit = step_forward(unit)
+    case get_units_from_fields(units, [unit]) do
+      [] -> {:cont, List.replace_at(units, unit_idx, unit)}
+      _ -> {:halt, units}
+    end
+  end
+
+  defp step_forward(%{label: "blue"} = unit), do: Map.put(unit, :row, unit.row + 1)
+  defp step_forward(%{label: "red"} = unit), do: Map.put(unit, :row, unit.row - 1)
 
   defp attack(units, unit, unit_idx) do
     units =
