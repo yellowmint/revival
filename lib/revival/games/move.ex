@@ -146,5 +146,5 @@ defmodule Revival.Games.Move do
     |> NaiveDateTime.add(round_time(mode))
   end
 
-  def round_time("classic"), do: 3600
+  def round_time("classic"), do: 15
 end
