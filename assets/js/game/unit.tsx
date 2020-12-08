@@ -1,4 +1,4 @@
-import React from "react"
+import React, {useState} from "react"
 import styles from "./unit.module.scss"
 import golem1 from "./units/golem_1.png"
 import golem2 from "./units/golem_2.png"
@@ -36,15 +36,48 @@ interface UnitProps {
 export type TUnit = {
     kind: TKind
     level: number
-    live?: number
     row?: number
     column?: number
+    live?: number
+    attack?: number
+    speed?: number
     label?: string
 }
 
-export const Unit = ({unit}: UnitProps) => (
-    <section className={`${styles.unit} ${unit.label === "red" && styles.red} ${unit.label === "blue" && styles.blue}`}>
-        <img src={kinds[unit.kind][unit.level - 1]} alt={unit.kind}/>
-        <span>{unit.live}</span>
-    </section>
-)
+export const Unit = ({unit}: UnitProps) => {
+    const [openStatsPreview, setOpenStatsPreview] = useState<boolean>()
+
+    return (
+        <section onMouseEnter={() => setOpenStatsPreview(true)}
+                 onMouseLeave={() => setOpenStatsPreview(false)}
+                 className={`${styles.unit} 
+                             ${unit.label === "red" && styles.red} 
+                             ${unit.label === "blue" && styles.blue}`}
+        >
+            <img src={kinds[unit.kind][unit.level - 1]} alt={unit.kind}/>
+            <span>{unit.live}</span>
+            {unit.label && openStatsPreview && (
+                <div className={`${styles.statsPreview}
+                                 ${unit.label === "red" && styles.red}
+                                 ${unit.label === "blue" && styles.blue}`}>
+                    <Stat name="Realm" value={unit.label}/>
+                    <Stat name="Kind" value={unit.kind}/>
+                    <Stat name="Level" value={unit.level}/>
+                    <Stat name="Live" value={unit.live}/>
+                    <Stat name="Attack" value={unit.attack}/>
+                    <Stat name="Speed" value={unit.speed}/>
+                    <Stat name="Position" value={`${unit.column} / ${unit.row}`}/>
+                </div>
+            )}
+        </section>
+    )
+}
+
+function Stat({name, value}: { name: string, value: any }) {
+    return (
+        <div className="swell">
+            <div>{name}:</div>
+            <div>{value}</div>
+        </div>
+    )
+}
