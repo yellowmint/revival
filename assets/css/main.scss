@@ -13,6 +13,7 @@ body {
 
 .page-header {
   flex-shrink: 0;
+  margin: 10px;
 
   .main-header {
     font-size: 20px;
@@ -25,8 +26,8 @@ main {
 }
 
 .page-footer {
+  margin: 10px;
   flex-shrink: 0;
-  padding: 20px;
 }
 
 a {

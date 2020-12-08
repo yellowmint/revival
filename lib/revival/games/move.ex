@@ -23,6 +23,8 @@ defmodule Revival.Games.Move do
     handle_moves(play, moves)
     |> Board.next_round()
     |> check_winner()
+    |> supply_wallets()
+    |> Shop.supply_shop()
     |> Board.remove_corpses()
     |> Map.put(:round, play.round + 1)
     |> Map.put(:next_move, Player.opponent_for(play.next_move))
@@ -42,6 +44,55 @@ defmodule Revival.Games.Move do
     |> Map.put(:status, "finished")
     |> Map.put(:finished_at, NaiveDateTime.utc_now())
     |> Map.put(:winner, Player.opponent_for(looser.label))
+  end
+
+  defp supply_wallets(play) do
+    corpses = Board.get_corpses(play.board)
+    players = Enum.map(play.players, &corpse_bonus(&1, corpses))
+
+    {_, player_idx} = get_player_of_current_round(play)
+    current_round_player = Enum.fetch!(players, player_idx)
+
+    wallet =
+      current_round_player.wallet
+      |> Wallet.supply(round_bonus(play.round))
+      |> Wallet.supply(time_bonus(play.next_move_deadline))
+
+    players = List.replace_at(players, player_idx, Map.put(current_round_player, :wallet, wallet))
+    Map.put(play, :players, players)
+  end
+
+  defp corpse_bonus(player, corpses) do
+    wallet =
+      corpses
+      |> Enum.filter(fn corpse -> corpse.label != player.label end)
+      |> Enum.reduce(player.wallet, &sell_corpse/2)
+
+    Map.put(player, :wallet, wallet)
+  end
+
+  defp sell_corpse(corpse, wallet) do
+    price = Shop.corpse_price(corpse)
+    Wallet.supply(wallet, price)
+  end
+
+  defp round_bonus(round) do
+    cond do
+      round < 10 -> %{money: 10, mana: 0}
+      round < 30 -> %{money: 20, mana: 0}
+      round < 50 -> %{money: 30, mana: 0}
+      true -> %{money: 50, mana: 0}
+    end
+  end
+
+  defp time_bonus(deadline) do
+    diff = NaiveDateTime.diff(deadline, NaiveDateTime.utc_now())
+    cond do
+      diff > 5 -> %{money: 15, mana: 0}
+      diff > 4 -> %{money: 10, mana: 0}
+      diff > 3 -> %{money: 5, mana: 0}
+      true -> %{money: 0, mana: 0}
+    end
   end
 
   def next_round_deadline(mode) do
@@ -70,7 +121,7 @@ defmodule Revival.Games.Move do
 
     {shop, good} = Shop.buy_unit(play.shop, kind, level)
 
-    wallet = Wallet.withdraw_money_for_good!(current_player.wallet, good)
+    wallet = Wallet.withdraw!(current_player.wallet, good.price)
     current_player = Map.put(current_player, :wallet, wallet)
 
     unit = Unit.new_from_shop_good(good, column, row, current_player.label)
