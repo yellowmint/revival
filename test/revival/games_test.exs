@@ -148,7 +148,7 @@ defmodule Revival.GamesTest do
       play = Games.end_round(play.id, player1.id, moves)
       player1 = Enum.fetch!(play.players, player1_idx)
 
-      assert player1.wallet.money == 75 # 50 (base) - 15 (satyr) + 20 (round bound) + 20 (time bonus)
+      assert player1.wallet.money == 60 # 50 (base) - 15 (satyr) + 10 (round bound) + 15 (time bonus)
       assert play.board.units == [
                %Unit{kind: "satyr", level: 1, column: 8, row: 4, label: player1.label, live: 15, attack: 10, speed: 3}
              ]
