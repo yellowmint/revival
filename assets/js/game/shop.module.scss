@@ -25,6 +25,10 @@
         border: 2px solid #7846b0;
       }
 
+      &.tooExpensive {
+        opacity: 0.5;
+      }
+
       .badge {
         border-radius: 2px;
         padding: 0 5px 5px 5px;

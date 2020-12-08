@@ -156,7 +156,7 @@ defmodule Revival.Games.Shop do
       |> Enum.reduce(play.shop, &corpse_to_good/2)
       |> round_supply(play.round)
 
-    Map.put(play, :shop, shop)
+    Map.put(play, :shop, sort_assortment(shop))
   end
 
   defp corpse_to_good(corpse, shop) do
@@ -190,5 +190,10 @@ defmodule Revival.Games.Shop do
     good = new_good(kind, level)
            |> Map.put(:count, 1)
     add_to_shop(shop, good)
+  end
+
+  defp sort_assortment(%{goods: goods} = shop) do
+    goods = Enum.sort(goods, fn a, b -> a.price.money <= b.price.money end)
+    %{shop | goods: goods}
   end
 end
