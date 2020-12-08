@@ -69,7 +69,7 @@ defmodule Revival.Games.Shop do
          level: 1,
          price: %{
            money: 30,
-           mana: 5
+           mana: 2
          }
        }
   defp new_good("minotaur", 2),
@@ -78,7 +78,7 @@ defmodule Revival.Games.Shop do
          level: 2,
          price: %{
            money: 70,
-           mana: 15
+           mana: 5
          }
        }
   defp new_good("minotaur", 3),
@@ -87,7 +87,7 @@ defmodule Revival.Games.Shop do
          level: 3,
          price: %{
            money: 140,
-           mana: 35
+           mana: 10
          }
        }
   defp new_good("wraith", 1),
@@ -96,7 +96,7 @@ defmodule Revival.Games.Shop do
          level: 1,
          price: %{
            money: 80,
-           mana: 20
+           mana: 6
          }
        }
   defp new_good("wraith", 2),
@@ -105,7 +105,7 @@ defmodule Revival.Games.Shop do
          level: 2,
          price: %{
            money: 150,
-           mana: 50
+           mana: 15
          }
        }
   defp new_good("wraith", 3),
@@ -114,7 +114,7 @@ defmodule Revival.Games.Shop do
          level: 3,
          price: %{
            money: 300,
-           mana: 80
+           mana: 35
          }
        }
 
@@ -131,7 +131,7 @@ defmodule Revival.Games.Shop do
 
   def corpse_price(corpse) do
     good = new_good(corpse.kind, corpse.level)
-    %{money: :math.floor(good.price.money / 4), mana: good.level * 2}
+    %{money: :math.floor(good.price.money / 4), mana: good.level}
   end
 
   def buy_unit(shop, kind, level) do
