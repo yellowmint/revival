@@ -2,24 +2,18 @@ defmodule Revival.Games.Move do
   alias Revival.Games.{Shop, Wallet, Player, Unit, Board}
 
   def ensure_correct_player_move!(play, player_id) do
-    {current_player, _} = get_player_of_current_round(play)
+    current_player = get_player_of_current_round(play)
 
     if player_id == current_player.id,
       do: play,
       else: raise("wrong player move")
   end
 
-  def get_player_of_current_round(play) do
-    player = Enum.find(play.players, fn x -> x.label == play.next_move end)
-    idx = Enum.find_index(play.players, fn x -> x.id == player.id end)
-    {player, idx}
-  end
+  def get_player_of_current_round(play),
+    do: Enum.find(play.players, fn x -> x.label == play.next_move end)
 
-  def get_opponent_of_current_round(play) do
-    player = Enum.find(play.players, fn x -> x.label != play.next_move end)
-    idx = Enum.find_index(play.players, fn x -> x.id == player.id end)
-    {player, idx}
-  end
+  def get_opponent_of_current_round(play),
+    do: Enum.find(play.players, fn x -> x.label != play.next_move end)
 
   def next_move_changes(play, moves) do
     play
@@ -46,29 +40,31 @@ defmodule Revival.Games.Move do
 
     {shop, good} = Shop.buy_unit(play.shop, %{kind: kind, level: level})
 
-    {current_player, current_player_idx} = get_player_of_current_round(play)
-    current_player = Player.spend!(current_player, good.price)
-    players = List.replace_at(play.players, current_player_idx, current_player)
+    player =
+      play
+      |> get_player_of_current_round()
+      |> Player.spend!(good.price)
 
-    unit = Unit.new(good, %{column: column, row: row}, current_player.label)
+    unit = Unit.new(good, %{column: column, row: row}, player.label)
     board = Board.place_unit!(play.board, unit)
 
     play
     |> Map.put(:shop, shop)
     |> Map.put(:board, board)
-    |> Map.put(:players, players)
+    |> Map.put(:players, Player.update_player_in_list(play.players, player))
   end
 
   defp move_units_on_board(%{board: board, next_move: next_move} = play) do
     {board, base_damage} = Board.next_round(board, next_move)
 
-    {opponent, opponent_idx} = get_opponent_of_current_round(play)
-    opponent = Map.put(opponent, :live, opponent.live - base_damage)
-    players = List.replace_at(play.players, opponent_idx, opponent)
+    opponent =
+      play
+      |> get_opponent_of_current_round()
+      |> Map.update!(:live, fn x -> x - base_damage end)
 
     play
     |> Map.put(:board, board)
-    |> Map.put(:players, players)
+    |> Map.put(:players, Player.update_player_in_list(play.players, opponent))
   end
 
   defp remove_corpses_from_board(%{board: board} = play) do
@@ -94,16 +90,15 @@ defmodule Revival.Games.Move do
     corpses = Board.get_corpses(play.board)
     players = Enum.map(play.players, &corpse_bonus(&1, corpses))
 
-    {_, player_idx} = get_player_of_current_round(play)
-    current_round_player = Enum.fetch!(players, player_idx)
+    current_player = get_player_of_current_round(play)
 
     wallet =
-      current_round_player.wallet
+      current_player.wallet
       |> Wallet.supply(round_bonus(play.round))
       |> Wallet.supply(time_bonus(play.next_move_deadline))
 
-    players = List.replace_at(players, player_idx, Map.put(current_round_player, :wallet, wallet))
-    Map.put(play, :players, players)
+    players = Player.update_player_in_list(players, %{current_player | wallet: wallet})
+    %{play | players: players}
   end
 
   defp corpse_bonus(player, corpses) do

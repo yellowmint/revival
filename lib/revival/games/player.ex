@@ -70,6 +70,11 @@ defmodule Revival.Games.Player do
     %{player | wallet: wallet}
   end
 
+  def update_player_in_list(players, player) do
+    idx = Enum.find_index(players, fn x -> x.id == player.id end)
+    List.replace_at(players, idx, player)
+  end
+
   def handle_win(_players, "draw"), do: nil
 
   def handle_win(players, winner) do
