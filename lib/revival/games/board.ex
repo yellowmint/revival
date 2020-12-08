@@ -166,6 +166,20 @@ defmodule Revival.Games.Board do
     |> Map.put(:players, List.replace_at(play.players, opponent_idx, opponent))
   end
 
+  def upgrade_units_in_revival_spots(%{units: units, revival_spots: revival_spots} = board) do
+    units =
+      get_units_from_fields(units, revival_spots)
+      |> Enum.reduce(units, &upgrade_unit/2)
+
+    %{board | units: units}
+  end
+
+  defp upgrade_unit(%{live: live} = unit, units) do
+    unit_idx = Enum.find_index(units, &equal_position(&1, unit))
+    live = :math.floor(live * 1.2)
+    List.replace_at(units, unit_idx, %{unit | live: live})
+  end
+
   def get_corpses(board) do
     Enum.reject(board.units, &is_alive/1)
   end
