@@ -11,22 +11,22 @@ defmodule Revival.Games.Wallet do
     }
   end
 
-  def withdraw!(wallet, amount) do
+  def withdraw!(wallet, %{money: money, mana: mana}) do
     wallet
-    |> Map.put(:money, wallet.money - amount.money)
-    |> Map.put(:mana, wallet.mana - amount.mana)
+    |> Map.put(:money, wallet.money - money)
+    |> Map.put(:mana, wallet.mana - mana)
     |> ensure_founds!
   end
 
-  defp ensure_founds!(wallet) do
-    if wallet.money < 0, do: raise "not enough money for purchase"
-    if wallet.mana < 0, do: raise "not enough mana for purchase"
+  defp ensure_founds!(%{money: money, mana: mana} = wallet) do
+    if money < 0, do: raise("not enough money for purchase")
+    if mana < 0, do: raise("not enough mana for purchase")
     wallet
   end
 
-  def supply(wallet, amount) do
+  def supply(wallet, %{money: money, mana: mana}) do
     wallet
-    |> Map.put(:money, wallet.money + amount.money)
-    |> Map.put(:mana, wallet.mana + amount.mana)
+    |> Map.put(:money, wallet.money + money)
+    |> Map.put(:mana, wallet.mana + mana)
   end
 end

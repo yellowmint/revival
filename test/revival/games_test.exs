@@ -121,7 +121,7 @@ defmodule Revival.GamesTest do
 
     test "end_round/3 creates next round" do
       play = GamesFactory.build(:started_play)
-      {current_player, _} = Move.get_player_of_current_round(play)
+      current_player = Move.get_player_of_current_round(play)
       play = Games.end_round(play.id, current_player.id, [])
 
       assert play.round == 2
@@ -130,8 +130,7 @@ defmodule Revival.GamesTest do
 
     test "end_round/3 raises when wrong player tires to make move" do
       play = GamesFactory.build(:started_play)
-      {current_player, _} = Move.get_player_of_current_round(play)
-      opponent = Enum.find(play.players, fn x -> x.id != current_player.id end)
+      opponent = Move.get_opponent_of_current_round(play)
 
       assert_raise RuntimeError, "wrong player move", fn ->
         Games.end_round(play.id, opponent.id, [])
@@ -140,23 +139,23 @@ defmodule Revival.GamesTest do
 
     test "end_round/3 handles moves" do
       play = GamesFactory.build(:started_play) |> ensure_blue_player_round
-      {player1, player1_idx} = Move.get_player_of_current_round(play)
+      player = Move.get_player_of_current_round(play)
       moves = [
         %{"type" => "place_unit", "position" => %{"column" => 8, "row" => 1}, "unit" => %{"kind" => "satyr", "level" => 1}}
       ]
 
-      play = Games.end_round(play.id, player1.id, moves)
-      player1 = Enum.fetch!(play.players, player1_idx)
+      play = Games.end_round(play.id, player.id, moves)
+      player = Move.get_opponent_of_current_round(play)
 
-      assert player1.wallet.money == 60 # 50 (base) - 15 (satyr) + 10 (round bound) + 15 (time bonus)
+      assert player.wallet.money == 60 # 50 (base) - 15 (satyr) + 10 (round bound) + 15 (time bonus)
       assert play.board.units == [
-               %Unit{kind: "satyr", level: 1, column: 8, row: 4, label: player1.label, live: 15, attack: 10, speed: 3}
+               %Unit{kind: "satyr", level: 1, column: 8, row: 4, label: player.label, live: 15, attack: 10, speed: 3}
              ]
     end
 
     def ensure_blue_player_round(%{next_move: "blue"} = play), do: play
     def ensure_blue_player_round(%{next_move: "red"} = play) do
-      {player, _} = Move.get_player_of_current_round(play)
+      player = Move.get_player_of_current_round(play)
       Games.end_round(play.id, player.id, [])
     end
   end
