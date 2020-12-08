@@ -7,3 +7,4 @@ resources:
   - main.certificate.yaml
   - main.frontend.yaml
   - main.ingress.yaml
+  - main.backendconfig.yaml
