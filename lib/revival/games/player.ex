@@ -65,21 +65,32 @@ defmodule Revival.Games.Player do
 
   defp initial_live("classic"), do: 100
 
+  def spend!(%{wallet: wallet} = player, price) do
+    wallet = Wallet.withdraw!(wallet, price)
+    %{player | wallet: wallet}
+  end
+
   def handle_win(_players, "draw"), do: nil
+
   def handle_win(players, winner) do
     Enum.each(players, fn player ->
-      if winner == player.label, do: increase_rank(player.user_id),
-                                 else: decrease_rank(player.user_id)
+      if winner == player.label,
+        do: increase_rank(player.user_id),
+        else: decrease_rank(player.user_id)
     end)
   end
 
   defp increase_rank(nil), do: nil
+
   defp increase_rank(user_id) do
-    Repo.update_all(from(p in Player, where: p.user_id == ^user_id), [inc: [rank: 1]])
+    Repo.update_all(from(p in Player, where: p.user_id == ^user_id), inc: [rank: 1])
   end
 
   defp decrease_rank(nil), do: nil
+
   defp decrease_rank(user_id) do
-    Repo.update_all(from(p in Player, where: p.user_id == ^user_id and p.rank > 1), [inc: [rank: -1]])
+    Repo.update_all(from(p in Player, where: p.user_id == ^user_id and p.rank > 1),
+      inc: [rank: -1]
+    )
   end
 end

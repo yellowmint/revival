@@ -3,8 +3,10 @@ defmodule Revival.Games.Move do
 
   def ensure_correct_player_move!(play, player_id) do
     {current_player, _} = get_player_of_current_round(play)
-    if player_id == current_player.id, do: play,
-                                       else: raise "wrong player move"
+
+    if player_id == current_player.id,
+      do: play,
+      else: raise("wrong player move")
   end
 
   def get_player_of_current_round(play) do
@@ -20,7 +22,8 @@ defmodule Revival.Games.Move do
   end
 
   def next_move_changes(play, moves) do
-    handle_moves(play, moves)
+    play
+    |> handle_moves(moves)
     |> Board.next_round()
     |> check_winner()
     |> supply_wallets()
@@ -31,6 +34,29 @@ defmodule Revival.Games.Move do
     |> Map.put(:next_move, Player.opponent_for(play.next_move))
     |> Map.put(:next_move_deadline, next_round_deadline(play.mode))
     |> Map.from_struct()
+  end
+
+  defp handle_moves(play, moves), do: Enum.reduce(moves, play, &handle_move/2)
+
+  defp handle_move(%{"type" => "place_unit"} = move, play) do
+    %{
+      "unit" => %{"kind" => kind, "level" => level},
+      "position" => %{"column" => column, "row" => row}
+    } = move
+
+    {shop, good} = Shop.buy_unit(play.shop, %{kind: kind, level: level})
+
+    {current_player, current_player_idx} = get_player_of_current_round(play)
+    current_player = Player.spend!(current_player, good.price)
+    players = List.replace_at(play.players, current_player_idx, current_player)
+
+    unit = Unit.new(good, %{column: column, row: row}, current_player.label)
+    board = Board.place_unit!(play.board, unit, current_player.label)
+
+    play
+    |> Map.put(:shop, shop)
+    |> Map.put(:board, board)
+    |> Map.put(:players, players)
   end
 
   defp check_winner(play) do
@@ -88,6 +114,7 @@ defmodule Revival.Games.Move do
 
   defp time_bonus(deadline) do
     diff = NaiveDateTime.diff(deadline, NaiveDateTime.utc_now())
+
     cond do
       diff > 5 -> %{money: 15, mana: 0}
       diff > 4 -> %{money: 10, mana: 0}
@@ -107,35 +134,4 @@ defmodule Revival.Games.Move do
   end
 
   def round_time("classic"), do: 3600
-
-  defp handle_moves(play, moves) do
-    Enum.reduce(moves, play, &handle_move/2)
-  end
-
-  defp handle_move(%{"type" => "place_unit"} = move, play) do
-    %{
-      "unit" => %{
-        "kind" => kind,
-        "level" => level
-      },
-      "position" => %{
-        "column" => column,
-        "row" => row
-      }
-    } = move
-    {current_player, current_player_idx} = get_player_of_current_round(play)
-
-    {shop, good} = Shop.buy_unit(play.shop, kind, level)
-
-    wallet = Wallet.withdraw!(current_player.wallet, good.price)
-    current_player = Map.put(current_player, :wallet, wallet)
-
-    unit = Unit.new_from_shop_good(good, column, row, current_player.label)
-    board = Board.place_unit(play.board, unit, current_player.label)
-
-    play
-    |> Map.put(:shop, shop)
-    |> Map.put(:board, board)
-    |> Map.put(:players, List.replace_at(play.players, current_player_idx, current_player))
-  end
 end

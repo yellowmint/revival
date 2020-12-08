@@ -8,9 +8,20 @@ defmodule Revival.Games.Play do
   @primary_key {:id, :binary_id, autogenerate: true}
   @derive {
     Jason.Encoder,
-    only: [:id, :mode, :status, :board, :shop, :players, :started_at,
-      :round, :round_time,
-      :next_move, :next_move_deadline, :winner]
+    only: [
+      :id,
+      :mode,
+      :status,
+      :board,
+      :shop,
+      :players,
+      :started_at,
+      :round,
+      :round_time,
+      :next_move,
+      :next_move_deadline,
+      :winner
+    ]
   }
 
   schema "plays" do
@@ -77,22 +88,22 @@ defmodule Revival.Games.Play do
   def changeset(play, attrs \\ %{}) do
     play
     |> cast(
-         attrs,
-         [
-           :mode,
-           :status,
-           :round,
-           :next_move,
-           :next_move_deadline,
-           :timer_pid,
-           :board,
-           :shop,
-           :players,
-           :started_at,
-           :finished_at,
-           :winner
-         ]
-       )
+      attrs,
+      [
+        :mode,
+        :status,
+        :round,
+        :next_move,
+        :next_move_deadline,
+        :timer_pid,
+        :board,
+        :shop,
+        :players,
+        :started_at,
+        :finished_at,
+        :winner
+      ]
+    )
     |> validate_required([:mode, :status, :board])
     |> validate_inclusion(:mode, ["classic"])
     |> validate_inclusion(:status, ["joining", "warming_up", "playing", "finished"])

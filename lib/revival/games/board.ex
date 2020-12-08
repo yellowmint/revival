@@ -18,6 +18,7 @@ defmodule Revival.Games.Board do
       new_revival_spot(board.columns, board.rows, "blue"),
       new_revival_spot(board.columns, board.rows, "red")
     ]
+
     Map.put(board, :revival_spots, revival_spots)
   end
 
@@ -28,13 +29,17 @@ defmodule Revival.Games.Board do
   defp revival_line(rows, "blue"), do: round(rows / 4)
   defp revival_line(rows, "red"), do: rows - revival_line(rows, "blue") + 1
 
-  def place_unit(board, unit, label) do
-    if get_units_from_fields(board.units, [unit]) != [], do: raise "another unit already in field"
-    if label == "blue" and unit.row != 1, do: raise "blue player must place units in first row"
-    if label == "red" and unit.row != board.rows, do: raise "red player must place units in last row"
+  def place_unit!(board, unit, label) do
+    if get_units_from_fields(board.units, [unit]) != [],
+      do: raise("another unit already in field")
 
-    board
-    |> Map.put(:units, board.units ++ [unit])
+    if label == "blue" and unit.row != 1,
+      do: raise("blue player must place units in first row")
+
+    if label == "red" and unit.row != board.rows,
+      do: raise("red player must place units in last row")
+
+    Map.put(board, :units, board.units ++ [unit])
   end
 
   defp get_units_from_fields(units, fields) do
@@ -60,7 +65,10 @@ defmodule Revival.Games.Board do
   defp unit_moves(%{board: board} = play, unit) do
     unit_idx = Enum.find_index(board.units, &equal_position(&1, unit))
 
-    units = Enum.reduce_while(1..unit.speed, board.units, fn _, units -> unit_move(units, unit_idx, board.rows) end)
+    units =
+      Enum.reduce_while(1..unit.speed, board.units, fn _, units ->
+        unit_move(units, unit_idx, board.rows)
+      end)
 
     play
     |> Map.put(:board, Map.put(board, :units, units))
@@ -76,8 +84,9 @@ defmodule Revival.Games.Board do
   end
 
   defp forward(units, unit, unit_idx, rows_limit) do
-    if unit_at_border(unit, rows_limit), do: {:halt, units},
-                                         else: try_step_forward(units, unit, unit_idx)
+    if unit_at_border(unit, rows_limit),
+      do: {:halt, units},
+      else: try_step_forward(units, unit, unit_idx)
   end
 
   defp unit_at_border(%{label: "blue"} = unit, rows_limit), do: unit.row == rows_limit
@@ -85,6 +94,7 @@ defmodule Revival.Games.Board do
 
   defp try_step_forward(units, unit, unit_idx) do
     unit = step_forward(unit)
+
     case get_units_from_fields(units, [unit]) do
       [] -> {:cont, List.replace_at(units, unit_idx, unit)}
       _ -> {:halt, units}
@@ -102,8 +112,10 @@ defmodule Revival.Games.Board do
       |> Enum.reduce_while(units, &attack_enemy_unit(&2, unit_idx, &1))
 
     veteran = Enum.fetch!(units, unit_idx)
-    if unit.live != veteran.live, do: {:fought, units},
-                                  else: :no_enemies
+
+    if unit.live != veteran.live,
+      do: {:fought, units},
+      else: :no_enemies
   end
 
   defp get_enemies_to_attack(units, unit) do
@@ -117,7 +129,7 @@ defmodule Revival.Games.Board do
     [
       %{column: unit.column - 1, row: unit.row},
       %{column: unit.column + 1, row: unit.row},
-      %{column: unit.column, row: unit.row + 1},
+      %{column: unit.column, row: unit.row + 1}
     ]
   end
 
@@ -125,7 +137,7 @@ defmodule Revival.Games.Board do
     [
       %{column: unit.column - 1, row: unit.row},
       %{column: unit.column + 1, row: unit.row},
-      %{column: unit.column, row: unit.row - 1},
+      %{column: unit.column, row: unit.row - 1}
     ]
   end
 
@@ -134,6 +146,7 @@ defmodule Revival.Games.Board do
     enemy_idx = Enum.find_index(units, &equal_position(&1, enemy))
 
     {enemy, unit} = clash(enemy, unit)
+
     units =
       units
       |> List.replace_at(enemy_idx, enemy)
@@ -176,6 +189,7 @@ defmodule Revival.Games.Board do
 
   defp upgrade_unit(unit, units) do
     unit_idx = Enum.find_index(units, &equal_position(&1, unit))
+
     unit =
       unit
       |> Map.put(:speed, unit.speed + 1)
