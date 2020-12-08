@@ -70,7 +70,7 @@ defmodule Revival.Games.Board do
     unit = Enum.fetch!(units, unit_idx)
 
     case attack(units, unit, unit_idx) do
-      {:fought, units} -> {:halt, units}
+      {:fought, units} -> {:cont, units}
       :no_enemies -> forward(units, unit, unit_idx, rows)
     end
   end
