@@ -70,30 +70,29 @@ defmodule Revival.Games.Board do
     unit = Enum.fetch!(units, unit_idx)
 
     case attack(units, unit, unit_idx) do
-      {:fought, units} -> {:halt, units}
+      {:fought, units} -> {:cont, units}
       :no_enemies -> forward(units, unit, unit_idx, rows)
     end
   end
 
   defp forward(units, unit, unit_idx, rows_limit) do
-    case step_forward(unit, rows_limit) do
-      :border -> {:halt, units}
-      {:step, unit} -> {:cont, List.replace_at(units, unit_idx, unit)}
-    end
-  end
-
-  defp step_forward(%{label: "blue"} = unit, rows_limit) do
-    if unit_at_border(unit, rows_limit), do: :border,
-                                         else: {:step, Map.put(unit, :row, unit.row + 1)}
-  end
-
-  defp step_forward(%{label: "red"} = unit, _) do
-    if unit_at_border(unit, nil), do: :border,
-                                  else: {:step, Map.put(unit, :row, unit.row - 1)}
+    if unit_at_border(unit, rows_limit), do: {:halt, units},
+                                         else: try_step_forward(units, unit, unit_idx)
   end
 
   defp unit_at_border(%{label: "blue"} = unit, rows_limit), do: unit.row == rows_limit
   defp unit_at_border(%{label: "red"} = unit, _), do: unit.row == 1
+
+  defp try_step_forward(units, unit, unit_idx) do
+    unit = step_forward(unit)
+    case get_units_from_fields(units, [unit]) do
+      [] -> {:cont, List.replace_at(units, unit_idx, unit)}
+      _ -> {:halt, units}
+    end
+  end
+
+  defp step_forward(%{label: "blue"} = unit), do: Map.put(unit, :row, unit.row + 1)
+  defp step_forward(%{label: "red"} = unit), do: Map.put(unit, :row, unit.row - 1)
 
   defp attack(units, unit, unit_idx) do
     units =
@@ -165,6 +164,25 @@ defmodule Revival.Games.Board do
 
     play
     |> Map.put(:players, List.replace_at(play.players, opponent_idx, opponent))
+  end
+
+  def upgrade_units_in_revival_spots(%{units: units, revival_spots: revival_spots} = board) do
+    units =
+      get_units_from_fields(units, revival_spots)
+      |> Enum.reduce(units, &upgrade_unit/2)
+
+    %{board | units: units}
+  end
+
+  defp upgrade_unit(unit, units) do
+    unit_idx = Enum.find_index(units, &equal_position(&1, unit))
+    unit =
+      unit
+      |> Map.put(:speed, unit.speed + 1)
+      |> Map.put(:live, :math.floor(unit.live * 1.2))
+      |> Map.put(:attack, :math.floor(unit.attack * 1.3))
+
+    List.replace_at(units, unit_idx, unit)
   end
 
   def get_corpses(board) do

@@ -26,6 +26,7 @@ defmodule Revival.Games.Move do
     |> supply_wallets()
     |> Shop.supply_shop()
     |> Board.remove_corpses()
+    |> revival_spots()
     |> Map.put(:round, play.round + 1)
     |> Map.put(:next_move, Player.opponent_for(play.next_move))
     |> Map.put(:next_move_deadline, next_round_deadline(play.mode))
@@ -93,6 +94,11 @@ defmodule Revival.Games.Move do
       diff > 3 -> %{money: 5, mana: 0}
       true -> %{money: 0, mana: 0}
     end
+  end
+
+  def revival_spots(%{board: board} = play) do
+    board = Board.upgrade_units_in_revival_spots(board)
+    %{play | board: board}
   end
 
   def next_round_deadline(mode) do

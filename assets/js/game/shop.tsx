@@ -32,7 +32,10 @@ export const Shop = ({shop}: ShopProps) => {
             <div className={styles.wrapper}>
                 {ctx.shop.goods.map(good => (
                     <div key={`${good.kind}-${good.level}`}
-                         className={`${styles.shopUnit} ${ctx.selectedGood === good && styles.selected}`}
+                         className={`${styles.shopUnit}
+                                     ${ctx.selectedGood === good && styles.selected}
+                                     ${ctx.wallet.money - good.price.money < 0 && styles.tooExpensive}
+                                     ${ctx.wallet.mana - good.price.mana < 0 && styles.tooExpensive}`}
                          onClick={() => dispatch({type: "selectGood", payload: good})}
                     >
                         <Unit unit={good}/>
