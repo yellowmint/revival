@@ -24,11 +24,11 @@ defmodule Revival.Games.Move do
   def next_move_changes(play, moves) do
     play
     |> handle_moves(moves)
-    |> Board.next_round()
+    |> move_units_on_board()
     |> check_winner()
     |> supply_wallets()
     |> Shop.supply_shop()
-    |> Board.remove_corpses()
+    |> remove_corpses_from_board()
     |> revival_spots()
     |> Map.put(:round, play.round + 1)
     |> Map.put(:next_move, Player.opponent_for(play.next_move))
@@ -51,12 +51,29 @@ defmodule Revival.Games.Move do
     players = List.replace_at(play.players, current_player_idx, current_player)
 
     unit = Unit.new(good, %{column: column, row: row}, current_player.label)
-    board = Board.place_unit!(play.board, unit, current_player.label)
+    board = Board.place_unit!(play.board, unit)
 
     play
     |> Map.put(:shop, shop)
     |> Map.put(:board, board)
     |> Map.put(:players, players)
+  end
+
+  defp move_units_on_board(%{board: board, next_move: next_move} = play) do
+    {board, base_damage} = Board.next_round(board, next_move)
+
+    {opponent, opponent_idx} = get_opponent_of_current_round(play)
+    opponent = Map.put(opponent, :live, opponent.live - base_damage)
+    players = List.replace_at(play.players, opponent_idx, opponent)
+
+    play
+    |> Map.put(:board, board)
+    |> Map.put(:players, players)
+  end
+
+  defp remove_corpses_from_board(%{board: board} = play) do
+    board = Board.remove_corpses(board)
+    %{play | board: board}
   end
 
   defp check_winner(play) do
