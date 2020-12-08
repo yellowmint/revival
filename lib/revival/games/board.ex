@@ -174,10 +174,15 @@ defmodule Revival.Games.Board do
     %{board | units: units}
   end
 
-  defp upgrade_unit(%{live: live} = unit, units) do
+  defp upgrade_unit(unit, units) do
     unit_idx = Enum.find_index(units, &equal_position(&1, unit))
-    live = :math.floor(live * 1.2)
-    List.replace_at(units, unit_idx, %{unit | live: live})
+    unit =
+      unit
+      |> Map.put(:speed, unit.speed + 1)
+      |> Map.put(:live, :math.floor(unit.live * 1.2))
+      |> Map.put(:attack, :math.floor(unit.attack * 1.3))
+
+    List.replace_at(units, unit_idx, unit)
   end
 
   def get_corpses(board) do
