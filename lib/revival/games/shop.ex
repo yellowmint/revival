@@ -1,5 +1,5 @@
 defmodule Revival.Games.Shop do
-  alias Revival.Games.{Shop, Board}
+  alias Revival.Games.Shop
 
   @derive Jason.Encoder
   defstruct [:goods]
@@ -84,40 +84,29 @@ defmodule Revival.Games.Shop do
     %{money: :math.floor(good.price.money / 4), mana: good.level}
   end
 
-  def supply_shop(play) do
+  def supply_shop(shop, corpses, round) do
     shop =
-      Board.get_corpses(play.board)
-      |> Enum.reduce(play.shop, &corpse_to_good/2)
-      |> round_supply(play.round)
+      corpses
+      |> Enum.reduce(shop, &new_good_from_corpse/2)
+      |> round_supply(round)
 
-    Map.put(play, :shop, sort_assortment(shop))
+    sort_assortment(shop)
   end
 
-  defp corpse_to_good(corpse, shop) do
-    cond do
-      corpse.live < -20 ->
-        shop
-
-      true ->
-        good =
-          new_good(corpse.kind, corpse.level)
-          |> Map.put(:count, 1)
-
-        add_to_shop(shop, good)
-    end
+  defp new_good_from_corpse(corpse, shop) do
+    if corpse.live < -20,
+      do: shop,
+      else: add_to_shop(shop, new_good(corpse, 1))
   end
 
-  defp add_to_shop(shop, good) do
+  defp add_to_shop(%{goods: goods} = shop, good) do
     goods =
-      case Enum.find_index(shop.goods, &equal_kind_and_level(&1, good)) do
-        nil ->
-          shop.goods ++ [good]
-
-        idx ->
-          List.update_at(shop.goods, idx, fn x -> Map.put(x, :count, x.count + good.count) end)
+      case Enum.find_index(goods, &equal_kind_and_level(&1, good)) do
+        nil -> goods ++ [good]
+        idx -> List.update_at(goods, idx, fn x -> Map.put(x, :count, x.count + good.count) end)
       end
 
-    Map.put(shop, :goods, goods)
+    %{shop | goods: goods}
   end
 
   defp round_supply(shop, round) do

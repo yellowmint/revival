@@ -75,6 +75,9 @@ defmodule Revival.Games.Player do
     List.replace_at(players, idx, player)
   end
 
+  def get_dead_player(players),
+    do: Enum.find(players, fn player -> player.live <= 0 end)
+
   def handle_win(_players, "draw"), do: nil
 
   def handle_win(players, winner) do

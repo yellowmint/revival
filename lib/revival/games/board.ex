@@ -51,8 +51,13 @@ defmodule Revival.Games.Board do
   end
 
   def next_round(board, move_label) do
-    board = attack_enemies_and_move_forward(board, move_label)
+    board =
+      board
+      |> attack_enemies_and_move_forward(move_label)
+      |> upgrade_units_in_revival_spots()
+
     base_damage = attack_enemy_base(board, move_label)
+
     {board, base_damage}
   end
 
@@ -169,7 +174,7 @@ defmodule Revival.Games.Board do
     |> Enum.reduce(0, &(&1.attack + &2))
   end
 
-  def upgrade_units_in_revival_spots(%{units: units, revival_spots: revival_spots} = board) do
+  defp upgrade_units_in_revival_spots(%{units: units, revival_spots: revival_spots} = board) do
     units =
       get_units_from_fields(units, revival_spots)
       |> Enum.reduce(units, &upgrade_unit/2)
@@ -189,9 +194,8 @@ defmodule Revival.Games.Board do
     List.replace_at(units, unit_idx, unit)
   end
 
-  def get_corpses(board) do
-    Enum.reject(board.units, &is_alive/1)
-  end
+  def get_corpses(%{units: units}),
+    do: Enum.reject(units, &is_alive/1)
 
   def remove_corpses(%{units: units} = board) do
     units = Enum.filter(units, &is_alive/1)
