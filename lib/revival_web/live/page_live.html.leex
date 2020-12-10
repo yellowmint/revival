@@ -1,5 +1,7 @@
 <h1>Welcome voyager!</h1>
 
+<%= link "Instruction", to: Routes.instruction_path(@socket, :index) %>
+<br><br>
 <%= link "New Game", to: Routes.game_path(@socket, :create), method: :post %>
 <br><br>
 <%= link "Ranking", to: Routes.player_path(@socket, :index) %>
