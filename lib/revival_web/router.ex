@@ -20,6 +20,8 @@ defmodule RevivalWeb.Router do
 
     live "/", PageLive, :index
 
+    get "/instruction", InstructionController, :index
+
     resources "/users", UserController, only: [:new, :create]
     resources "/sessions", SessionController, only: [:new, :create, :delete], singleton: true
 
