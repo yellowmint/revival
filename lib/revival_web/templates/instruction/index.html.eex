@@ -1,1 +1,23 @@
-hello
+<h1>Instruction</h1>
+<h2>Starting new game</h2>
+<p>To start a fresh game go to <a href="/"> the main page of revival space</a> and click "New
+    game" link. You will be redirected to newly created game.</p>
+<p>You can join a game by entering your name, but we recommend to create account to protect you from losing game by
+    accidental page refresh and profit from listing you in players ranking page.</p>
+<p>Once you joined the game, you must wait for opponent to do the same. Copy link from your browser and send it to other
+    player or if you want to do just a quick test open your link in another browser window and play against
+    yourself.</p>
+<h2>Play</h2>
+<p>All you must know is to be fast, each round takes 15s if you fail, you will loose game. Select units from shop and
+    place them on green field. Don't forget to click "End round" button!</p>
+<p>Shop is shared between players, so if you buy all of it, your opponent will have limited choice. After each round
+    shop is filled with not entirely damaged units and one random unit.</p>
+<p>To buy you need money, right? In revival game you will get money from killing enemy units, round bonus and time bonus
+    (when you finish your round early). Mana can be earn only by killing enemy units.</p>
+<p>Each unit has different stats, you can preview it be hovering mouse over unit. Discovering units behaviour is part of
+    fun, so let you explore.</p>
+<p>To win a game you must destroy opponent base, your units will attack enemy base while standing on board edge.</p>
+<p>Last but not least on the board are two yellow spots - there are revival area. When unit is standing on this field,
+    it will become stronger. Try use revival spots to make advantage.</p>
+<br>
+<p>Enjoy!</p>
